@@ -1,0 +1,17 @@
+# Секреты
+.env
+.env.local
+.env.production
+
+# Go
+*.exe
+tmp/
+
+# Node
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+
+# Системное
+.DS_Store
+Thumbs.db
