@@ -14,19 +14,26 @@ const router = createRouter({
     { path: '/admin',  name: 'admin',   component: () => import('@/views/AdminPanel.vue'),
       meta: { requiresAuth: true, role: 'admin' } },
     { path: '/profile', name: 'profile', component: () => import('@/views/ProfileView.vue'),
-      meta: { requiresAuth: true }
-    },
+      meta: { requiresAuth: true } },
     { path: '/gallery', name: 'gallery', component: () => import('@/views/GalleryView.vue') },
     { path: '/masters', component: () => import('@/views/MastersView.vue') },
     { path: '/about',   component: () => import('@/views/AboutView.vue') },
   ],
 })
 
-router.beforeEach((to) => {
+let sessionRestored = false
+
+router.beforeEach(async (to) => {
   const auth = useAuthStore()
+
+  if (!sessionRestored) {
+    sessionRestored = true
+    await auth.restoreSession()
+  }
+
   if (to.meta.requiresAuth && !auth.isLoggedIn) return '/login'
-  if (to.meta.role === 'master' && !auth.isMaster)  return '/'
-  if (to.meta.role === 'admin'  && !auth.isAdmin)   return '/'
+  if (to.meta.role === 'master' && !auth.isMaster) return '/'
+  if (to.meta.role === 'admin'  && !auth.isAdmin)  return '/'
   return true
 })
 
