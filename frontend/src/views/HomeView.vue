@@ -49,7 +49,6 @@ onUnmounted(() => {
   stopMasterSlider()
 })
 
-// ── СЛАЙДЕР МАСТЕРОВ ─────────────────────────────
 const currentMaster = ref(0)
 let sliderTimer: ReturnType<typeof setInterval> | null = null
 const sliderPaused = ref(false)
@@ -72,7 +71,6 @@ function nextMaster() {
 }
 function goMaster(i: number) { currentMaster.value = i }
 
-// ── КАРУСЕЛЬ ОТЗЫВОВ ─────────────────────────────
 const reviewsEl = ref<HTMLElement | null>(null)
 const reviewIdx = ref(0)
 
@@ -90,7 +88,6 @@ function scrollReview(dir: 'prev' | 'next') {
   }
 }
 
-// ── УТИЛИТЫ ──────────────────────────────────────
 function bookService(svc: Service) {
   store.reset(); store.selectedServices = [svc]; router.push('/book')
 }
@@ -108,7 +105,6 @@ function getCatColor(k: string) { return catColor[k] || '#8A8680' }
 <template>
   <div class="home">
 
-    <!-- ═══ HERO — FULLSCREEN ════════════════════════ -->
     <section class="hero-full">
       <div class="hero-full__bg">
         <img src="/images/мэйн.jpg" alt="Beauty Dana" class="hero-full__img" />
@@ -143,7 +139,6 @@ function getCatColor(k: string) { return catColor[k] || '#8A8680' }
       </div>
     </section>
 
-    <!-- ═══ STATS BAR — отдельный блок ══════════════ -->
     <div class="stats-bar">
       <div class="stats-bar__inner">
         <div class="stats-bar__item">
@@ -168,7 +163,6 @@ function getCatColor(k: string) { return catColor[k] || '#8A8680' }
       </div>
     </div>
 
-    <!-- ═══ УСЛУГИ ═══════════════════════════════════ -->
     <section class="home-section section-services" id="services">
       <div class="page-container">
         <div class="home-section__head">
@@ -208,7 +202,6 @@ function getCatColor(k: string) { return catColor[k] || '#8A8680' }
       </div>
     </section>
 
-    <!-- ═══ МАСТЕРА — СЛАЙДЕР ════════════════════════ -->
     <section
       class="home-section section-masters"
       id="masters"
@@ -229,7 +222,6 @@ function getCatColor(k: string) { return catColor[k] || '#8A8680' }
         </div>
 
         <div v-if="mastera.length > 0" class="masters-slider">
-          <!-- фото -->
           <div class="masters-slider__photo-wrap">
             <Transition name="master-fade" mode="out-in">
               <div :key="currentMaster" class="masters-slider__photo">
@@ -243,13 +235,11 @@ function getCatColor(k: string) { return catColor[k] || '#8A8680' }
                 </div>
               </div>
             </Transition>
-            <!-- нижний номер -->
             <span class="masters-slider__fig">
               FIG. {{ String(currentMaster + 1).padStart(2,'0') }} / МАСТЕР
             </span>
           </div>
 
-          <!-- инфо -->
           <div class="masters-slider__body">
             <Transition name="master-fade" mode="out-in">
               <div :key="currentMaster" class="masters-slider__info">
@@ -276,7 +266,6 @@ function getCatColor(k: string) { return catColor[k] || '#8A8680' }
               </div>
             </Transition>
 
-            <!-- навигация -->
             <div class="masters-slider__nav">
               <button class="masters-slider__arrow" @click="prevMaster" aria-label="Назад">
                 <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
@@ -307,7 +296,6 @@ function getCatColor(k: string) { return catColor[k] || '#8A8680' }
       </div>
     </section>
 
-    <!-- ═══ КАК РАБОТАЕТ ═════════════════════════════ -->
     <section class="home-section section-how">
       <div class="page-container">
         <div class="home-section__head">
@@ -328,7 +316,6 @@ function getCatColor(k: string) { return catColor[k] || '#8A8680' }
       </div>
     </section>
 
-    <!-- ═══ ГАЛЕРЕЯ ═══════════════════════════════════ -->
     <section class="home-section section-gallery" v-if="galereya.length > 0">
       <div class="page-container">
         <div class="home-section__head">
@@ -372,7 +359,6 @@ function getCatColor(k: string) { return catColor[k] || '#8A8680' }
       </div>
     </section>
 
-    <!-- ═══ ОТЗЫВЫ — КАРУСЕЛЬ ════════════════════════ -->
     <section class="home-section section-reviews" v-if="publicOtzivi.length > 0">
       <div class="page-container">
         <div class="home-section__head">
@@ -382,7 +368,6 @@ function getCatColor(k: string) { return catColor[k] || '#8A8680' }
               {{ t('home.reviews_title') }}<span class="red-dot">.</span>
             </h2>
           </div>
-          <!-- стрелки -->
           <div class="reviews-nav">
             <button
               class="reviews-nav__btn"
@@ -426,7 +411,6 @@ function getCatColor(k: string) { return catColor[k] || '#8A8680' }
       </div>
     </section>
 
-    <!-- ═══ О НАС (краткая версия) ══════════════════ -->
     <section class="home-section section-about" id="about">
       <div class="page-container">
         <div class="home-section__head">
@@ -493,7 +477,6 @@ function getCatColor(k: string) { return catColor[k] || '#8A8680' }
       </div>
     </section>
 
-    <!-- ═══ CTA ═══════════════════════════════════════ -->
     <section class="section-cta">
       <div class="page-container">
         <div class="cta-inner">
@@ -512,7 +495,6 @@ function getCatColor(k: string) { return catColor[k] || '#8A8680' }
 </template>
 
 <style scoped>
-/* ── HERO FULLSCREEN ─────────────────────────────── */
 .hero-full {
   position: relative;
   min-height: 560px;
@@ -592,7 +574,6 @@ function getCatColor(k: string) { return catColor[k] || '#8A8680' }
 }
 .hero-full__perks-dot { opacity: 0.3; }
 
-/* ── STATS BAR — отдельный блок ─────────────────── */
 .stats-bar {
   background: var(--bg-dark, #1a1814);
   border-bottom: 1px solid var(--border);
@@ -624,7 +605,6 @@ function getCatColor(k: string) { return catColor[k] || '#8A8680' }
   margin: 12px 0;
 }
 
-/* ── УНИФИЦИРОВАННЫЕ СЕКЦИИ ──────────────────────── */
 .home-section { padding: 80px 0; border-bottom: 1px solid var(--border); }
 .home-section__head {
   display: flex; justify-content: space-between;
@@ -638,7 +618,6 @@ function getCatColor(k: string) { return catColor[k] || '#8A8680' }
   margin-top: 8px;
 }
 
-/* ── УСЛУГИ — КАРТОЧКИ ───────────────────────────── */
 .services-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -661,7 +640,6 @@ function getCatColor(k: string) { return catColor[k] || '#8A8680' }
 .svc-card:hover .svc-card__arrow { opacity: 1; color: var(--cat-color, var(--accent)); }
 .svc-card:hover .svc-card__name  { color: var(--cat-color, var(--accent)); }
 
-/* цветная полоска слева */
 .svc-card__accent {
   width: 3px; flex-shrink: 0;
   background: var(--cat-color, var(--accent));
@@ -708,7 +686,6 @@ function getCatColor(k: string) { return catColor[k] || '#8A8680' }
   transition: all 0.2s;
 }
 
-/* ── СЛАЙДЕР МАСТЕРОВ ────────────────────────────── */
 .section-masters { background: var(--bg-muted); }
 .masters-slider {
   display: grid; grid-template-columns: 420px 1fr;
@@ -716,7 +693,6 @@ function getCatColor(k: string) { return catColor[k] || '#8A8680' }
   overflow: hidden; min-height: 480px;
 }
 
-/* фото */
 .masters-slider__photo-wrap {
   position: relative; background: var(--bg-card); overflow: hidden;
 }
@@ -740,7 +716,6 @@ function getCatColor(k: string) { return catColor[k] || '#8A8680' }
   background: rgba(26,24,20,0.45); padding: 4px 10px; border-radius: 1px;
 }
 
-/* инфо */
 .masters-slider__body {
   padding: 48px 40px;
   display: flex; flex-direction: column; justify-content: space-between;
@@ -771,7 +746,6 @@ function getCatColor(k: string) { return catColor[k] || '#8A8680' }
   border-radius: var(--radius-sm); color: var(--text-3);
 }
 
-/* навигация слайдера */
 .masters-slider__nav {
   display: flex; align-items: center; gap: 16px;
   padding-top: 24px; border-top: 1px solid var(--border);
@@ -803,13 +777,11 @@ function getCatColor(k: string) { return catColor[k] || '#8A8680' }
   letter-spacing: 0.04em;
 }
 
-/* анимация смены мастера */
 .master-fade-enter-active { transition: opacity 0.4s ease, transform 0.4s ease; }
 .master-fade-leave-active { transition: opacity 0.25s ease, transform 0.25s ease; }
 .master-fade-enter-from  { opacity: 0; transform: translateX(20px); }
 .master-fade-leave-to    { opacity: 0; transform: translateX(-20px); }
 
-/* ── КАК РАБОТАЕТ ────────────────────────────────── */
 .how-steps {
   display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; position: relative;
 }
@@ -832,7 +804,6 @@ function getCatColor(k: string) { return catColor[k] || '#8A8680' }
 }
 .how-step__desc { font-size: 13px; color: var(--text-3); line-height: 1.6; }
 
-/* ── ГАЛЕРЕЯ ─────────────────────────────────────── */
 .section-gallery { background: var(--bg-muted); }
 .gallery-blog { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
 .gallery-blog__featured { text-decoration: none; }
@@ -867,7 +838,6 @@ function getCatColor(k: string) { return catColor[k] || '#8A8680' }
 .gallery-blog__service { font-size: 11px; color: var(--text-3); margin-top: 2px; }
 .gallery-blog__item    { text-decoration: none; }
 
-/* ── ОТЗЫВЫ — КАРУСЕЛЬ ───────────────────────────── */
 .reviews-nav { display: flex; gap: 8px; }
 .reviews-nav__btn {
   width: 36px; height: 36px;
@@ -914,7 +884,6 @@ function getCatColor(k: string) { return catColor[k] || '#8A8680' }
 .review-card__name   { font-size: 13px; font-weight: 500; color: var(--text); }
 .review-card__service { font-size: 11px; color: var(--text-3); }
 
-/* ── О НАС (краткая) ─────────────────────────────── */
 .about-inner {
   display: grid; grid-template-columns: 1fr 1fr;
   gap: 60px; align-items: start;
@@ -939,7 +908,6 @@ function getCatColor(k: string) { return catColor[k] || '#8A8680' }
 .about-img--main img { aspect-ratio: 2/3; }
 .about-img--sm img   { aspect-ratio: 1/1; }
 
-/* ── CTA ─────────────────────────────────────────── */
 .section-cta { padding: 100px 0; }
 .cta-inner {
   text-align: center; display: flex;
@@ -947,7 +915,6 @@ function getCatColor(k: string) { return catColor[k] || '#8A8680' }
 }
 .cta-title { max-width: 600px; }
 
-/* ── АДАПТИВ 900px ───────────────────────────────── */
 @media (max-width: 900px) {
   .hero-full       { min-height: 480px; }
   .hero-full__inner { padding: 40px 0 36px; }
@@ -957,33 +924,27 @@ function getCatColor(k: string) { return catColor[k] || '#8A8680' }
   .home-section    { padding: 56px 0; }
   .home-section__head { margin-bottom: 32px; flex-wrap: wrap; gap: 12px; }
 
-  /* услуги */
   .services-grid   { grid-template-columns: repeat(2, 1fr); }
 
-  /* слайдер мастеров */
   .masters-slider  { grid-template-columns: 1fr; }
   .masters-slider__photo-wrap { height: 320px; }
   .masters-slider__photo      { min-height: 320px; }
   .masters-slider__initials   { min-height: 320px; font-size: 64px; }
   .masters-slider__body       { padding: 28px 24px; }
 
-  /* как работает */
   .how-steps       { grid-template-columns: 1fr 1fr; gap: 32px; }
   .how-step::after { display: none; }
   .how-step        { padding: 0; }
 
-  /* галерея */
   .gallery-blog     { grid-template-columns: 1fr; }
   .gallery-blog__grid { grid-template-columns: 1fr 1fr; }
 
-  /* о нас */
   .about-inner     { grid-template-columns: 1fr; gap: 32px; }
   .about-imgs      { grid-template-columns: 1fr 1fr; }
   .about-img--main { grid-row: auto; }
   .about-img--main img { aspect-ratio: 16/9; }
 }
 
-/* ── АДАПТИВ 600px ───────────────────────────────── */
 @media (max-width: 600px) {
   .hero-full        { min-height: 400px; }
   .hero-full__inner { padding: 32px 0 28px; }
@@ -994,7 +955,6 @@ function getCatColor(k: string) { return catColor[k] || '#8A8680' }
   .hero-full__sub   { font-size: 14px; margin-bottom: 24px; }
   .hero-full__perks { display: none; }
 
-  /* stats — 2x2 на мобиле */
   .stats-bar__inner {
     grid-template-columns: 1fr 1fr;
     grid-template-rows: auto auto;
@@ -1014,12 +974,10 @@ function getCatColor(k: string) { return catColor[k] || '#8A8680' }
   .home-section__head { flex-direction: column; align-items: flex-start; gap: 10px; }
   .home-section__title { font-size: clamp(26px, 8vw, 36px); }
 
-  /* услуги */
   .services-grid   { grid-template-columns: repeat(2, 1fr); gap: 8px; }
   .svc-card__name  { font-size: 15px; }
   .svc-card__price { font-size: 14px; }
 
-  /* слайдер */
   .masters-slider__photo-wrap { height: 260px; }
   .masters-slider__photo      { min-height: 260px; }
   .masters-slider__initials   { min-height: 260px; }
@@ -1028,21 +986,16 @@ function getCatColor(k: string) { return catColor[k] || '#8A8680' }
   .masters-slider__bio        { -webkit-line-clamp: 3; line-clamp: 3; }
   .masters-slider__tags       { margin-bottom: 20px; }
 
-  /* как работает */
   .how-steps       { grid-template-columns: 1fr; gap: 24px; }
   .how-step__num   { font-size: 36px; }
   .how-step__title { font-size: 16px; }
 
-  /* галерея */
   .gallery-blog__grid { grid-template-columns: 1fr; }
 
-  /* отзывы */
   .review-card     { min-width: 280px; }
 
-  /* о нас */
   .about-imgs      { display: none; }
 
-  /* cta */
   .section-cta     { padding: 56px 0; }
   .cta-title       { font-size: clamp(26px, 8vw, 36px); }
 }

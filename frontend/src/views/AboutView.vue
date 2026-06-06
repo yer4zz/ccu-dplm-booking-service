@@ -8,7 +8,6 @@ const { t } = useI18n()
 <template>
   <div class="about-page">
 
-    <!-- ══ HERO ═══════════════════════════════════ -->
     <section class="about-hero">
       <div class="about-hero__bg">
         <img src="/images/мэйн.jpg" alt="Beauty Dana" class="about-hero__img" />
@@ -29,7 +28,6 @@ const { t } = useI18n()
       </div>
     </section>
 
-    <!-- ══ ИСТОРИЯ ════════════════════════════════ -->
     <section class="about-story">
       <div class="page-container about-story__inner">
         <div class="about-story__left">
@@ -70,7 +68,6 @@ const { t } = useI18n()
       </div>
     </section>
 
-    <!-- ══ ЦИФРЫ ══════════════════════════════════ -->
     <section class="about-numbers">
       <div class="page-container">
         <div class="section-label" style="margin-bottom:40px;text-align:center">{{ t('about.numbers_label') }}</div>
@@ -99,7 +96,6 @@ const { t } = useI18n()
       </div>
     </section>
 
-    <!-- ══ ЦЕННОСТИ ═══════════════════════════════ -->
     <section class="about-values-section">
       <div class="page-container">
         <div class="about-values-inner">
@@ -115,7 +111,6 @@ const { t } = useI18n()
           <div class="values-list">
             <div class="value-item">
               <div class="value-item__icon">
-                <!-- star / quality -->
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="var(--accent)">
                   <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/>
                 </svg>
@@ -127,7 +122,6 @@ const { t } = useI18n()
             </div>
             <div class="value-item">
               <div class="value-item__icon">
-                <!-- heart / trust -->
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="var(--accent)">
                   <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
                 </svg>
@@ -139,7 +133,6 @@ const { t } = useI18n()
             </div>
             <div class="value-item">
               <div class="value-item__icon">
-                <!-- clock / time -->
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="var(--accent)">
                   <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm.5 5v5.25l4.5 2.67-.75 1.23L11 13V7h1.5z"/>
                 </svg>
@@ -151,7 +144,6 @@ const { t } = useI18n()
             </div>
             <div class="value-item">
               <div class="value-item__icon">
-                <!-- graduation / education -->
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="var(--accent)">
                   <path d="M5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82zM12 3L1 9l11 6 9-4.91V17h2V9L12 3z"/>
                 </svg>
@@ -166,7 +158,6 @@ const { t } = useI18n()
       </div>
     </section>
 
-    <!-- ══ ФОТО ГАЛЕРЕЯ ИНТЕРЬЕРА ══════════════════ -->
     <section class="about-gallery">
       <div class="page-container">
         <div class="section-label" style="margin-bottom:32px">{{ t('about.gallery_label') }}</div>
@@ -193,7 +184,6 @@ const { t } = useI18n()
       </div>
     </section>
 
-    <!-- ══ КОНТАКТЫ ════════════════════════════════ -->
     <section class="about-contacts">
       <div class="page-container about-contacts__inner">
         <div class="about-contacts__info">
@@ -241,7 +231,6 @@ const { t } = useI18n()
           </button>
         </div>
 
-        <!-- декоративный блок -->
         <div class="about-contacts__map">
           <div class="about-map-box">
             <div class="about-map-box__label">FIG. 06 · РАСПОЛОЖЕНИЕ</div>
@@ -277,7 +266,6 @@ const { t } = useI18n()
 <style scoped>
 .about-page { min-height: calc(100vh - 56px); }
 
-/* ── HERO ─────────────────────────────────────── */
 .about-hero {
   position: relative; height: 500px;
   display: flex; align-items: flex-end; overflow: hidden;
@@ -304,7 +292,6 @@ const { t } = useI18n()
 .about-hero__title em { font-style: italic; color: rgba(240,236,228,0.65); }
 .about-hero__sub { font-size: 16px; color: rgba(240,236,228,0.6); line-height: 1.7; max-width: 500px; }
 
-/* ── ИСТОРИЯ ──────────────────────────────────── */
 .about-story { padding: 100px 0; border-bottom: 1px solid var(--border); }
 .about-story__inner {
   display: grid; grid-template-columns: 1fr 1fr;
@@ -328,7 +315,6 @@ const { t } = useI18n()
   background: rgba(26,24,20,0.45); padding: 3px 8px; border-radius: 1px;
 }
 
-/* ── ЦИФРЫ ────────────────────────────────────── */
 .about-numbers {
   padding: 80px 0; background: var(--bg-muted); border-bottom: 1px solid var(--border);
 }
@@ -352,7 +338,6 @@ const { t } = useI18n()
 }
 .number-item__desc { font-size: 13px; color: var(--text-3); line-height: 1.6; }
 
-/* ── ЦЕННОСТИ ─────────────────────────────────── */
 .about-values-section { padding: 100px 0; border-bottom: 1px solid var(--border); }
 .about-values-inner {
   display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: start;
@@ -371,7 +356,6 @@ const { t } = useI18n()
 .value-item__title { font-size: 16px; font-weight: 600; color: var(--text); margin-bottom: 6px; }
 .value-item__desc  { font-size: 13px; color: var(--text-3); line-height: 1.6; }
 
-/* ── ГАЛЕРЕЯ ИНТЕРЬЕРА ────────────────────────── */
 .about-gallery { padding: 80px 0; background: var(--bg-muted); border-bottom: 1px solid var(--border); }
 .about-gallery-grid {
   display: grid;
@@ -402,7 +386,6 @@ const { t } = useI18n()
   text-transform: uppercase; color: rgba(255,255,255,0.65);
 }
 
-/* ── КОНТАКТЫ ─────────────────────────────────── */
 .about-contacts { padding: 100px 0; }
 .about-contacts__inner {
   display: grid; grid-template-columns: 1fr 1fr;
@@ -420,7 +403,6 @@ const { t } = useI18n()
 }
 .contact-social:hover { opacity: 0.7; }
 
-/* декоративная карточка */
 .about-contacts__map { display: flex; align-items: flex-start; }
 .about-map-box {
   width: 100%; max-width: 580px;
@@ -462,7 +444,6 @@ const { t } = useI18n()
 }
 .about-map-box__route:hover { opacity: 0.7; }
 
-/* ── АДАПТИВ ──────────────────────────────────── */
 @media (max-width: 900px) {
   .about-story__inner  { grid-template-columns: 1fr; gap: 40px; }
   .about-values-inner  { grid-template-columns: 1fr; gap: 40px; }

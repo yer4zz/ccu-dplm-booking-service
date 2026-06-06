@@ -209,7 +209,6 @@ function formatText(text: string): string {
 </script>
 
 <template>
-  <!-- FAB кнопка -->
   <div class="chat-fab" @click="open">
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
       <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"
@@ -221,7 +220,6 @@ function formatText(text: string): string {
   <Transition name="chat-slide">
     <div v-if="isOpen" class="chat-window">
 
-      <!-- Шапка -->
       <div class="chat-header">
         <div class="chat-header__left">
           <div class="chat-header__avatar">
@@ -259,7 +257,6 @@ function formatText(text: string): string {
         </div>
       </div>
 
-      <!-- Сообщения -->
       <div class="chat-messages" ref="messagesEl">
         <div
           v-for="(msg, i) in messages"
@@ -267,14 +264,12 @@ function formatText(text: string): string {
           class="chat-msg"
           :class="msg.role === 'user' ? 'chat-msg--user' : 'chat-msg--bot'"
         >
-          <!-- Анимация печатания -->
           <div v-if="msg.typing" class="chat-bubble chat-bubble--bot">
             <div class="chat-typing">
               <span /><span /><span />
             </div>
           </div>
 
-          <!-- Обычное сообщение -->
           <template v-else>
             <div
               class="chat-bubble"
@@ -286,7 +281,6 @@ function formatText(text: string): string {
               <span v-if="msg.source === 'gemini'" class="chat-msg__ai-badge">ИИ</span>
             </div>
 
-            <!-- Quick replies -->
             <div
               v-if="msg.role === 'bot' && i === messages.length - 1 && msg.quickReplies?.length"
               class="chat-replies"
@@ -302,7 +296,6 @@ function formatText(text: string): string {
         </div>
       </div>
 
-      <!-- Ввод -->
       <div class="chat-input-row">
         <input
           v-model="input"
@@ -329,7 +322,6 @@ function formatText(text: string): string {
 </template>
 
 <style scoped>
-/* ── FAB ─────────────────────────────────────────── */
 .chat-fab {
   position: fixed; bottom: 24px; right: 24px; z-index: 200;
   display: flex; align-items: center; gap: 8px;
@@ -341,7 +333,6 @@ function formatText(text: string): string {
 .chat-fab:hover { transform: translateY(-2px); box-shadow: 0 6px 24px rgba(232,68,42,0.5); }
 .chat-fab__label { font-size: 14px; font-weight: 600; }
 
-/* ── ОКНО ЧАТА ───────────────────────────────────── */
 .chat-window {
   position: fixed; bottom: 84px; right: 24px; z-index: 200;
   width: 380px; height: 540px;
@@ -353,7 +344,6 @@ function formatText(text: string): string {
   box-shadow: 0 8px 40px rgba(0,0,0,0.12);
 }
 
-/* ── ШАПКА ───────────────────────────────────────── */
 .chat-header {
   display: flex; justify-content: space-between; align-items: center;
   padding: 14px 16px;
@@ -396,7 +386,6 @@ function formatText(text: string): string {
 }
 .chat-header__btn:hover { background: rgba(255,255,255,0.2); }
 
-/* ── СООБЩЕНИЯ ───────────────────────────────────── */
 .chat-messages {
   flex: 1; overflow-y: auto; padding: 16px 14px;
   display: flex; flex-direction: column; gap: 10px;
@@ -433,7 +422,6 @@ function formatText(text: string): string {
   color: var(--accent); border-radius: 3px;
 }
 
-/* typing анимация */
 .chat-typing {
   display: flex; align-items: center; gap: 4px; padding: 4px 0;
 }
@@ -449,7 +437,6 @@ function formatText(text: string): string {
   30%           { transform: translateY(-6px); }
 }
 
-/* quick replies */
 .chat-replies { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
 .chat-reply {
   font-size: 12px; padding: 5px 12px;
@@ -461,7 +448,6 @@ function formatText(text: string): string {
 }
 .chat-reply:hover { background: var(--accent); color: #fff; }
 
-/* ── ВВОД ────────────────────────────────────────── */
 .chat-input-row {
   display: flex; gap: 8px; padding: 12px 14px;
   border-top: 1px solid var(--border);
@@ -484,13 +470,11 @@ function formatText(text: string): string {
 .chat-send:hover:not(:disabled) { transform: scale(1.08); }
 .chat-send:disabled { opacity: 0.4; cursor: not-allowed; }
 
-/* ── АНИМАЦИЯ ────────────────────────────────────── */
 .chat-slide-enter-active { transition: all 0.25s cubic-bezier(0.4,0,0.2,1); }
 .chat-slide-leave-active { transition: all 0.2s  cubic-bezier(0.4,0,0.2,1); }
 .chat-slide-enter-from   { opacity: 0; transform: translateY(20px) scale(0.96); }
 .chat-slide-leave-to     { opacity: 0; transform: translateY(16px) scale(0.96); }
 
-/* ── МОБИЛЕ ──────────────────────────────────────── */
 @media (max-width: 440px) {
   .chat-window { width: calc(100vw - 24px); right: 12px; bottom: 80px; height: 500px; }
   .chat-fab    { right: 16px; bottom: 16px; }

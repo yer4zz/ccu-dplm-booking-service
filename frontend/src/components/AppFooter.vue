@@ -8,7 +8,6 @@ const year = new Date().getFullYear()
 <template>
   <footer class="footer">
 
-    <!-- верхняя секция с большим лого -->
     <div class="footer__hero">
       <div class="footer__hero-inner page-container">
         <div class="footer__brand">
@@ -23,7 +22,6 @@ const year = new Date().getFullYear()
 
     <div class="footer__divider" />
 
-    <!-- основная сетка -->
     <div class="footer__main page-container">
 
       <div class="footer__col">
@@ -100,7 +98,6 @@ const year = new Date().getFullYear()
 
     <div class="footer__divider" />
 
-    <!-- нижняя строка как у open-design -->
     <div class="footer__bottom page-container">
       <p class="footer__copy">© {{ year }} Beauty Dana. {{ t('footer.rights') }}</p>
       <p class="footer__made">RESEARCH · BEAUTY · CARE · REPEAT</p>
@@ -117,7 +114,6 @@ const year = new Date().getFullYear()
   margin-top: auto;
 }
 
-/* верхняя секция с лого */
 .footer__hero { padding: 60px 0 40px; }
 .footer__hero-inner {
   display: flex;
@@ -159,13 +155,11 @@ const year = new Date().getFullYear()
   border-color: var(--accent);
 }
 
-/* разделитель */
 .footer__divider {
   height: 1px;
   background: rgba(240,236,228,0.08);
 }
 
-/* основная сетка */
 .footer__main {
   display: grid;
   grid-template-columns: 1.5fr 1.5fr 1.5fr 1fr;
@@ -218,7 +212,6 @@ const year = new Date().getFullYear()
 }
 .footer__social-link:hover { color: var(--accent); }
 
-/* нижняя строка */
 .footer__bottom {
   padding-top: 20px;
   padding-bottom: 24px;
