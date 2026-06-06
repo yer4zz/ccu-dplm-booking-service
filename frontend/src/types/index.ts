@@ -12,45 +12,47 @@ export interface Service {
   is_active: boolean
 }
   
-  export interface Master {
-    id: string
-    full_name: string
-    bio: string
-    experience_years: number
-    avatar_url: string
-    instagram: string
-    services: Service[]
-    is_active: boolean
-  }
-  
-  export interface Slot {
-    starts_at: string 
-    ends_at: string
-  }
-  
-  export interface Booking {
-    id: string
-    master_id: string
-    service_id: string
-    client_id: string
-    starts_at: string
-    ends_at: string
-    status: 'pending' | 'confirmed' | 'cancelled' | 'completed' | 'no_show'
-    price_paid: number
-    notes: string
-    created_at: string
-    service_name?: string
-    master_name?: string
-    client_name?: string 
-  }
-  
-  export interface User {
-    id: string
-    email: string
-    full_name: string
-    phone:     string
-    role: 'client' | 'master' | 'admin'
-  }
+export interface Master {
+  id: string
+  full_name: string
+  bio: string
+  experience_years: number
+  avatar_url: string
+  instagram: string
+  services: Service[]
+  is_active: boolean
+}
+
+export interface Slot {
+  starts_at: string 
+  ends_at: string
+}
+
+export interface Booking {
+  id: string
+  master_id: string
+  service_id: string
+  client_id: string
+  starts_at: string
+  ends_at: string
+  status: 'pending' | 'confirmed' | 'cancelled' | 'completed' | 'no_show'
+  price_paid: number
+  notes: string
+  vibe_mode?: string
+  created_at: string
+  service_name?: string
+  master_name?: string
+  client_name?: string
+  has_review?: boolean
+}
+
+export interface User {
+  id: string
+  email: string
+  full_name: string
+  phone:     string
+  role: 'client' | 'master' | 'admin'
+}
 
 export interface LoyaltyAccount {
   client_id: string

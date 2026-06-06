@@ -26,6 +26,7 @@ type Booking struct {
 	Status      BookingStatus `db:"status"     json:"status"`
 	PricePaid   float64       `db:"price_paid" json:"price_paid"`
 	Notes       string        `db:"notes"      json:"notes,omitempty"`
+	VibeMode    string        `db:"vibe_mode"  json:"vibe_mode,omitempty"`
 	CreatedAt   time.Time     `db:"created_at" json:"created_at"`
 	ClientEmail string        `db:"client_email" json:"client_email,omitempty"`
 	ServiceName string        `db:"-"            json:"service_name,omitempty"`

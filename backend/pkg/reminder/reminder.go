@@ -22,6 +22,7 @@ func (r *ReminderJob) RunAll() {
 	r.SendUpcomingReminders()
 	r.SendPersonalizedReminders()
 	r.ExpireWaitlist()
+	r.AutoUpdateBookingStatuses()
 }
 
 func (r *ReminderJob) SendUpcomingReminders() {
@@ -94,7 +95,7 @@ func (r *ReminderJob) SendUpcomingReminders() {
 			insert into public.reminder_log (booking_id, type)
 			values ($1, 'upcoming_24h')
 		`, u.ID)
-		fmt.Printf("[reminder] напоминание → %s (%s)\n", u.ClientEmail, u.ServiceName)
+		fmt.Printf("[reminder] напоминание - %s (%s)\n", u.ClientEmail, u.ServiceName)
 	}
 }
 
@@ -183,7 +184,7 @@ func (r *ReminderJob) SendPersonalizedReminders() {
 			insert into public.reminder_log (client_id, type)
 			values ($1, 'personalized')
 		`, c.ClientID)
-		fmt.Printf("[reminder] ✅ персон. → %s (каждые %d дней)\n",
+		fmt.Printf("[reminder] персон. - %s (каждые %d дней)\n",
 			c.Email, c.AvgIntervalDays)
 	}
 }

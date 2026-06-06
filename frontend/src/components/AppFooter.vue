@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { RouterLink } from 'vue-router'
 import { useI18n } from 'vue-i18n'
+import { MapPin, Phone, Mail, Clock } from 'lucide-vue-next'
+
 const { t } = useI18n()
 const year = new Date().getFullYear()
 </script>
@@ -46,19 +48,19 @@ const year = new Date().getFullYear()
       <div class="footer__col">
         <p class="footer__col-title">{{ t('footer.contacts_title') }}</p>
         <div class="footer__contact">
-          <span class="footer__contact-icon">📍</span>
+          <span class="footer__contact-icon"><MapPin :size="16" /></span>
           <span>{{ t('footer.address') }}</span>
         </div>
         <div class="footer__contact">
-          <span class="footer__contact-icon">📞</span>
+          <span class="footer__contact-icon"><Phone :size="16" /></span>
           <span>+7 777 000 0000</span>
         </div>
         <div class="footer__contact">
-          <span class="footer__contact-icon">✉️</span>
+          <span class="footer__contact-icon"><Mail :size="16" /></span>
           <span>beauty@dana.kz</span>
         </div>
         <div class="footer__contact">
-          <span class="footer__contact-icon">🕐</span>
+          <span class="footer__contact-icon"><Clock :size="16" /></span>
           <span>{{ t('footer.hours') }}</span>
         </div>
       </div>

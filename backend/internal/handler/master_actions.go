@@ -2,15 +2,17 @@ package handler
 
 import (
 	"context"
+	"math"
 	"net/http"
 	"time"
 
-	"github.com/gin-gonic/gin"
-	"github.com/google/uuid"
 	"booking-service/internal/model"
 	"booking-service/internal/repository"
 	"booking-service/internal/service"
 	"booking-service/pkg/notify"
+
+	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 )
 
 
@@ -172,62 +174,74 @@ func GetMasterReviews(repo *repository.Repo) gin.HandlerFunc {
 }
 
 func GetMasterStats(repo *repository.Repo) gin.HandlerFunc {
-    return func(c *gin.Context) {
-        masterID, _ := uuid.Parse(c.GetString("user_id"))
+	return func(c *gin.Context) {
+		masterID, _ := uuid.Parse(c.GetString("user_id"))
+		ctx := c.Request.Context()
 
-		name := ""
-        repo.DB().QueryRow(c.Request.Context(),
-            `select full_name from public.profiles where id = $1`,
-            masterID).Scan(&name)
+		now        := time.Now()
+		monthStart := time.Date(now.Year(), now.Month(), 1, 0, 0, 0, 0, time.UTC)
 
-        from := time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC)
-        to   := time.Now()
+		var (
+			totalBookings     int
+			completedBookings int
+			totalRevenue      float64
+			avgPrice          float64
+			thisMonthRevenue  float64
+			thisMonthBookings int
+			avgRating         float64
+			totalReviews      int
+			topService        string
+		)
 
-        masterStats, err := repo.GetMasterStats(c.Request.Context(), from, to)
-        if err != nil {
-            c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-            return
-        }
+		// Основная статистика
+		repo.DB().QueryRow(ctx, `
+			select
+				count(*)                                                    as total_bookings,
+				count(*) filter (where status = 'completed')               as completed_bookings,
+				coalesce(sum(price_paid) filter (where status = 'completed'), 0) as total_revenue,
+				coalesce(avg(price_paid) filter (where status = 'completed'), 0) as avg_price,
+				coalesce(sum(price_paid) filter (where status = 'completed' and starts_at >= $2), 0) as this_month_revenue,
+				count(*) filter (where starts_at >= $2)                    as this_month_bookings
+			from public.bookings
+			where master_id = $1
+		`, masterID, monthStart).Scan(
+			&totalBookings, &completedBookings,
+			&totalRevenue, &avgPrice,
+			&thisMonthRevenue, &thisMonthBookings,
+		)
 
-        now        := time.Now()
-        monthStart := time.Date(now.Year(), now.Month(), 1, 0, 0, 0, 0, time.UTC)
+		// Рейтинг и количество отзывов
+		repo.DB().QueryRow(ctx, `
+			select
+				coalesce(avg(rating), 0) as avg_rating,
+				count(*)                 as total_reviews
+			from public.reviews
+			where master_id = $1
+		`, masterID).Scan(&avgRating, &totalReviews)
 
-        var thisMonthRevenue float64
-        repo.DB().QueryRow(c.Request.Context(), `
-            select coalesce(sum(b.price_paid), 0)
-            from public.bookings b
-            join public.profiles p on p.id = b.master_id
-            where p.full_name = $1
-              and b.status = 'completed'
-              and b.starts_at >= $2
-              and b.starts_at < $3
-        `, name, monthStart, now).Scan(&thisMonthRevenue)
+		// Популярная услуга
+		repo.DB().QueryRow(ctx, `
+			select coalesce(s.name, '')
+			from public.bookings b
+			join public.services s on s.id = b.service_id
+			where b.master_id = $1 and b.status = 'completed'
+			group by s.name
+			order by count(*) desc
+			limit 1
+		`, masterID).Scan(&topService)
 
-        var result *repository.MasterStat
-        for _, s := range masterStats {
-            if s.MasterName == name {
-                result = &s
-                break
-            }
-        }
-
-        if result == nil {
-            c.JSON(http.StatusOK, gin.H{
-                "total_bookings": 0, "completed_bookings": 0,
-                "total_revenue": 0, "avg_price": 0,
-                "this_month_revenue": 0,
-            })
-            return
-        }
-
-        c.JSON(http.StatusOK, gin.H{
-            "total_bookings":     result.Total,
-            "completed_bookings": result.Completed,
-            "total_revenue":      result.Revenue,
-            "avg_price":          result.AvgPrice,
-            "this_month_revenue": thisMonthRevenue,
-        })
-    }
+		c.JSON(http.StatusOK, gin.H{
+			"total_bookings":      totalBookings,
+			"completed_bookings":  completedBookings,
+			"total_revenue":       totalRevenue,
+			"avg_price":           avgPrice,
+			"this_month_revenue":  thisMonthRevenue,
+			"this_month_bookings": thisMonthBookings,
+			"avg_rating":          math.Round(avgRating*10) / 10,
+			"total_reviews":       totalReviews,
+			"top_service":         topService,
+		})
+	}
 }
 
 func GetClientReschedules(repo *repository.Repo) gin.HandlerFunc {

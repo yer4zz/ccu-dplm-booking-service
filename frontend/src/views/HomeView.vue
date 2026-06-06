@@ -7,12 +7,12 @@ import { mastersApi }            from '@/api/masters'
 import { galleryApi }            from '@/api/gallery'
 import { useBookingStore }       from '@/stores/booking'
 import type { Service, Master }  from '@/types'
+import { Check, Gem, Heart, Zap, ArrowRight, Star } from 'lucide-vue-next'
 
 const { t, tm, locale } = useI18n()
 const router    = useRouter()
 const store     = useBookingStore()
 
-// Локализованное название услуги
 function svcName(svc: any): string {
   if (locale.value === 'kz' && svc.name_kz) return svc.name_kz
   if (locale.value === 'en' && svc.name_en) return svc.name_en
@@ -96,8 +96,12 @@ function bookMaster(m: Master) {
 }
 function getCatLabel(k: string) { return t(`category.${k}`) }
 const catColor: Record<string, string> = {
-  hair:'#8B5CF6', nails:'#E8442A', face:'#F59E0B',
-  combo:'#C9956A', beard:'#3B82F6', care:'#10B981',
+  hair:  '#D97706',
+  nails: '#E8442A',
+  face:  '#F59E0B',
+  combo: '#C2410C',
+  beard: '#B45309',
+  care:  '#D97706',
 }
 function getCatColor(k: string) { return catColor[k] || '#8A8680' }
 </script>
@@ -123,18 +127,18 @@ function getCatColor(k: string) { return catColor[k] || '#8A8680' }
         <p class="hero-full__sub">{{ t('home.hero_sub') }}</p>
         <div class="hero-full__btns">
           <button class="btn btn-primary btn-lg" @click="router.push('/book')">
-            {{ t('home.book_btn') }} →
+            {{ t('home.book_btn') }} <ArrowRight :size="16"/>
           </button>
           <RouterLink to="/masters" class="btn btn-outline-light btn-lg">
             {{ t('home.masters_btn') }}
           </RouterLink>
         </div>
         <div class="hero-full__perks">
-          <span>✓ {{ t('home.perk_discount') }}</span>
+          <span><Check :size="14" /> {{ t('home.perk_discount') }}</span>
           <span class="hero-full__perks-dot">·</span>
-          <span>✓ {{ t('home.perk_points') }}</span>
+          <span><Check :size="14" /> {{ t('home.perk_points') }}</span>
           <span class="hero-full__perks-dot">·</span>
-          <span>✓ {{ t('home.perk_reminders') }}</span>
+          <span><Check :size="14" /> {{ t('home.perk_reminders') }}</span>
         </div>
       </div>
     </section>
@@ -173,7 +177,7 @@ function getCatColor(k: string) { return catColor[k] || '#8A8680' }
             </h2>
           </div>
           <button class="arrow-link" @click="router.push('/book')">
-            Все услуги →
+            Все услуги <ArrowRight :size="16"/>
           </button>
         </div>
         <div class="services-grid">
@@ -193,10 +197,11 @@ function getCatColor(k: string) { return catColor[k] || '#8A8680' }
               <h3 class="svc-card__name">{{ svcName(svc) }}</h3>
               <div class="svc-card__footer">
                 <span class="svc-card__dur">{{ svc.duration_min }} {{ t('common.min') }}</span>
-                <span class="svc-card__price">{{ svc.price.toLocaleString() }} {{ t('common.currency') }}</span>
+                <div style="display:flex;align-items:center;gap:8px">
+                  <span class="svc-card__price">{{ svc.price.toLocaleString() }} {{ t('common.currency') }}</span>
+                </div>
               </div>
             </div>
-            <div class="svc-card__arrow">→</div>
           </div>
         </div>
       </div>
@@ -217,7 +222,7 @@ function getCatColor(k: string) { return catColor[k] || '#8A8680' }
             </h2>
           </div>
           <RouterLink to="/masters" class="arrow-link">
-            Все мастера →
+            Все мастера <ArrowRight :size="16"/>
           </RouterLink>
         </div>
 
@@ -261,7 +266,7 @@ function getCatColor(k: string) { return catColor[k] || '#8A8680' }
                   class="btn btn-primary"
                   @click="bookMaster(mastera[currentMaster])"
                 >
-                  {{ t('home.masters_book_to') }} {{ mastera[currentMaster]?.full_name?.split(' ')[0] }} →
+                  {{ t('home.masters_book_to') }} {{ mastera[currentMaster]?.full_name?.split(' ')[0] }} <ArrowRight :size="16"/>
                 </button>
               </div>
             </Transition>
@@ -325,13 +330,13 @@ function getCatColor(k: string) { return catColor[k] || '#8A8680' }
               {{ t('gallery.title') }}<span class="red-dot">.</span>
             </h2>
           </div>
-          <RouterLink to="/gallery" class="arrow-link">{{ t('home.gallery_open') }}</RouterLink>
+          <RouterLink to="/gallery" class="arrow-link">{{ t('home.gallery_open') }} <ArrowRight :size="16" /></RouterLink>
         </div>
         <div class="gallery-blog">
           <RouterLink to="/gallery" class="gallery-blog__featured">
             <div class="gallery-blog__img-wrap">
               <img :src="galereya[0]?.image_url" :alt="galereya[0]?.title || 'Work'" loading="lazy" />
-              <div class="gallery-blog__overlay"><span class="gallery-blog__arrow">→</span></div>
+              <div class="gallery-blog__overlay"><span class="gallery-blog__arrow"><ArrowRight :size="16"/></span></div>
               <span class="gallery-blog__no">Nº 01</span>
             </div>
             <div class="gallery-blog__info">
@@ -346,7 +351,7 @@ function getCatColor(k: string) { return catColor[k] || '#8A8680' }
             >
               <div class="gallery-blog__img-wrap">
                 <img :src="w.image_url" :alt="w.title || 'Work'" loading="lazy" />
-                <div class="gallery-blog__overlay"><span class="gallery-blog__arrow">→</span></div>
+                <div class="gallery-blog__overlay"><span class="gallery-blog__arrow"><ArrowRight :size="16"/></span></div>
                 <span class="gallery-blog__no">Nº {{ String(i+2).padStart(2,'0') }}</span>
               </div>
               <div class="gallery-blog__info">
@@ -401,7 +406,13 @@ function getCatColor(k: string) { return catColor[k] || '#8A8680' }
             <p class="review-card__text">{{ rv.comment }}</p>
             <div class="review-card__footer">
               <span class="review-card__stars">
-                {{ '★'.repeat(rv.rating) }}{{ '☆'.repeat(5 - rv.rating) }}
+                <template v-for="n in 5" :key="n">
+                  <Star
+                  :size="16"
+                  :fill="n <= rv.rating ? 'var(--accent)' : 'none'"
+                  :stroke="'var(--accent)'"
+                />
+                </template>
               </span>
               <span class="review-card__name">— {{ rv.client_name }}</span>
               <span class="review-card__service">{{ rv.service_name }}</span>
@@ -420,7 +431,7 @@ function getCatColor(k: string) { return catColor[k] || '#8A8680' }
               {{ t('home.about_brand_title') }}<span class="red-dot">.</span>
             </h2>
           </div>
-          <RouterLink to="/about" class="arrow-link">{{ t('home.about_more') }}</RouterLink>
+          <RouterLink to="/about" class="arrow-link">{{ t('home.about_more') }} <ArrowRight :size="16" /></RouterLink>
         </div>
         <div class="about-inner">
           <div class="about-text">
@@ -428,33 +439,21 @@ function getCatColor(k: string) { return catColor[k] || '#8A8680' }
             <p class="about-p">{{ t('home.about_p2') }}</p>
             <div class="about-values">
               <div class="about-value">
-                <span class="about-value__icon">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="var(--accent)">
-                    <path d="M12 2L2 9l10 13L22 9 12 2z"/>
-                  </svg>
-                </span>
+                <span class="about-value__icon"><Gem :size="20" :stroke="'var(--accent)'" fill="none" /></span>
                 <div>
                   <p class="about-value__title">{{ t('home.value_quality_title') }}</p>
                   <p class="about-value__desc">{{ t('home.value_quality_desc') }}</p>
                 </div>
               </div>
               <div class="about-value">
-                <span class="about-value__icon">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="var(--accent)">
-                    <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
-                  </svg>
-                </span>
+                <span class="about-value__icon"><Heart :size="20" :stroke="'var(--accent)'" fill="none" /></span>
                 <div>
                   <p class="about-value__title">{{ t('home.value_trust_title') }}</p>
                   <p class="about-value__desc">{{ t('home.value_trust_desc') }}</p>
                 </div>
               </div>
               <div class="about-value">
-                <span class="about-value__icon">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="var(--accent)">
-                    <path d="M7 2v11h3v9l7-12h-4l4-8z"/>
-                  </svg>
-                </span>
+                <span class="about-value__icon"><Zap :size="20" :stroke="'var(--accent)'" fill="none" /></span>
                 <div>
                   <p class="about-value__title">{{ t('home.value_innov_title') }}</p>
                   <p class="about-value__desc">{{ t('home.value_innov_desc') }}</p>
@@ -485,7 +484,7 @@ function getCatColor(k: string) { return catColor[k] || '#8A8680' }
             {{ t('home.cta_title') }}<span class="red-dot">.</span>
           </h2>
           <button class="btn btn-primary btn-lg" @click="router.push('/book')">
-            {{ t('home.cta_btn') }} →
+            {{ t('home.cta_btn') }} <ArrowRight :size="16"/>
           </button>
         </div>
       </div>
@@ -637,7 +636,7 @@ function getCatColor(k: string) { return catColor[k] || '#8A8680' }
   transform: translateY(-2px);
   box-shadow: 0 4px 16px rgba(0,0,0,0.06);
 }
-.svc-card:hover .svc-card__arrow { opacity: 1; color: var(--cat-color, var(--accent)); }
+
 .svc-card:hover .svc-card__name  { color: var(--cat-color, var(--accent)); }
 
 .svc-card__accent {
@@ -661,29 +660,24 @@ function getCatColor(k: string) { return catColor[k] || '#8A8680' }
   color: var(--text); opacity: 0.15; line-height: 1;
 }
 .svc-card__cat {
-  font-size: 9px; font-weight: 600; letter-spacing: 0.1em;
+  font-size: 10px; font-weight: 600; letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--cat-color, var(--accent));
   opacity: 0.8;
 }
 .svc-card__name {
-  font-family: var(--font-serif); font-size: 17px; font-weight: 700;
+  font-family: var(--font-serif); font-size: 19px; font-weight: 700;
   color: var(--text); line-height: 1.2;
   transition: color 0.2s;
   flex: 1;
 }
 .svc-card__footer {
-  display: flex; justify-content: space-between; align-items: baseline;
+  display: flex; justify-content: space-between; align-items: center;
   margin-top: auto;
 }
-.svc-card__dur   { font-size: 11px; color: var(--text-3); }
+.svc-card__dur { font-size: 12px; color: var(--text-3); }
 .svc-card__price {
-  font-family: var(--font-serif); font-size: 16px; font-weight: 700; color: var(--text);
-}
-.svc-card__arrow {
-  position: absolute; bottom: 14px; right: 14px;
-  font-size: 14px; color: var(--text-3); opacity: 0.3;
-  transition: all 0.2s;
+  font-family: var(--font-serif); font-size: 18px; font-weight: 700; color: var(--text);
 }
 
 .section-masters { background: var(--bg-muted); }
@@ -880,7 +874,11 @@ function getCatColor(k: string) { return catColor[k] || '#8A8680' }
   display: flex; flex-direction: column; gap: 4px;
   padding-top: 16px; border-top: 1px solid var(--border);
 }
-.review-card__stars  { font-size: 13px; color: var(--accent); letter-spacing: 2px; }
+.review-card__stars {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
 .review-card__name   { font-size: 13px; font-weight: 500; color: var(--text); }
 .review-card__service { font-size: 11px; color: var(--text-3); }
 

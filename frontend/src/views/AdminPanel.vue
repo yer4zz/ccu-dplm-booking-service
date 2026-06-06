@@ -13,6 +13,7 @@ import {
   Title, Tooltip, Legend, Filler,
 } from 'chart.js'
 import { Line, Bar, Doughnut } from 'vue-chartjs'
+import { ArrowRight, X } from 'lucide-vue-next'
 
 ChartJS.register(
   CategoryScale, LinearScale, PointElement,
@@ -493,19 +494,19 @@ async function createService() {
                     class="btn btn-sm"
                     style="background:var(--success-bg);color:var(--success);height:30px;padding:0 10px;font-size:12px"
                     @click="updateBookingStatus(b.id, 'confirmed')"
-                  >✓</button>
+                  >Принять</button>
                   <button
                     v-if="b.status === 'confirmed'"
                     class="btn btn-sm"
                     style="background:var(--info-bg,#EBF3FB);color:var(--info);height:30px;padding:0 10px;font-size:12px"
                     @click="updateBookingStatus(b.id, 'completed')"
-                  >★</button>
+                  >Завершить</button>
                   <button
                     v-if="['pending','confirmed'].includes(b.status)"
                     class="btn btn-danger btn-sm"
                     style="height:30px;padding:0 10px;font-size:12px"
                     @click="updateBookingStatus(b.id, 'cancelled')"
-                  >✕</button>
+                  >Отменить</button>
                 </div>
               </td>
             </tr>
@@ -593,7 +594,7 @@ async function createService() {
         <div class="modal-box card">
           <div class="modal-header">
             <h3 class="t-h3">Добавить услугу</h3>
-            <button class="btn btn-ghost btn-icon" @click="showAddService = false">✕</button>
+            <button class="btn btn-ghost btn-icon" @click="showAddService = false"><X :size="20" /></button>
           </div>
           <div style="display:flex;flex-direction:column;gap:16px;margin-top:8px">
             <div class="field">
@@ -628,7 +629,7 @@ async function createService() {
             <div style="display:flex;gap:10px;justify-content:flex-end;padding-top:8px;border-top:1px solid var(--border)">
               <button class="btn btn-outline" @click="showAddService = false">Отмена</button>
               <button class="btn btn-primary" :disabled="!newService.name" @click="createService">
-                Создать →
+                Создать <ArrowRight :size="16" />
               </button>
             </div>
           </div>
@@ -643,7 +644,7 @@ async function createService() {
         <div class="modal-box card">
           <div class="modal-header">
             <h3 class="t-h3">Добавить мастера<span class="red-dot">.</span></h3>
-            <button class="btn btn-ghost btn-icon" @click="showAddMaster = false">✕</button>
+            <button class="btn btn-ghost btn-icon" @click="showAddMaster = false"><X :size="20" /></button>
           </div>
 
           <div style="display:flex;flex-direction:column;gap:16px;margin-top:8px">
@@ -681,7 +682,7 @@ async function createService() {
             </div>
 
             <div style="background:var(--info-bg);padding:12px 14px;border-radius:var(--radius-sm);font-size:13px;color:var(--info)">
-              ℹ️ После создания мастер сможет войти через страницу входа с указанным email и паролем.
+              После создания мастер сможет войти через страницу входа с указанным email и паролем.
             </div>
 
             <div style="display:flex;gap:10px;justify-content:flex-end;padding-top:8px;border-top:1px solid var(--border)">
@@ -692,7 +693,7 @@ async function createService() {
                 @click="createMaster"
               >
                 <span v-if="savingMaster" class="btn__spinner" />
-                Создать мастера →
+                Создать мастера <ArrowRight :size="16" />
               </button>
             </div>
           </div>

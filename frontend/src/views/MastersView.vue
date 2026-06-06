@@ -5,6 +5,7 @@ import { useI18n }        from 'vue-i18n'
 import { mastersApi }     from '@/api/masters'
 import { useBookingStore } from '@/stores/booking'
 import type { Master }    from '@/types'
+import { ArrowRight, X } from 'lucide-vue-next'
 
 const { t } = useI18n()
 
@@ -104,7 +105,8 @@ function openMaster(m: Master) {
               </div>
               <div class="master-card__photo-overlay">
                 <span class="master-card__photo-icon">
-                  {{ vybran?.id === m.id ? '✕' : '→' }}
+                  <X v-if="vybran?.id === m.id" :size="16" />
+                  <ArrowRight v-else :size="16" />
                 </span>
               </div>
               <span class="master-card__num">{{ String(i+1).padStart(2,'0') }}</span>
@@ -119,7 +121,7 @@ function openMaster(m: Master) {
                   </p>
                 </div>
                 <button class="btn btn-primary btn-sm master-card__book" @click="bookMaster(m)">
-                  Записаться →
+                  Записаться <ArrowRight :size="16" />
                 </button>
               </div>
 
@@ -152,7 +154,7 @@ function openMaster(m: Master) {
                     </div>
                   </div>
                   <button class="btn btn-primary" style="margin-top:16px;width:100%" @click="bookMaster(m)">
-                    Записаться к {{ m.full_name.split(' ')[0] }} →
+                    Записаться к {{ m.full_name.split(' ')[0] }} <ArrowRight :size="16" />
                   </button>
                 </div>
               </Transition>
@@ -169,7 +171,7 @@ function openMaster(m: Master) {
           {{ t('masters.cta_title') }}<span class="red-dot">.</span>
         </h2>
         <button class="btn btn-primary btn-lg" @click="router.push('/book')">
-          Записаться сейчас →
+          Записаться сейчас <ArrowRight :size="16" />
         </button>
       </div>
     </section>

@@ -5,6 +5,7 @@ import { loyaltyApi }     from '@/api/loyalty'
 import { api }            from '@/api'
 import { useI18n }        from 'vue-i18n'
 import type { LoyaltyAccount, PointTransaction, BeautyStreak } from '@/types'
+import { Star, ArrowRight } from 'lucide-vue-next'
 
 const auth    = useAuthStore()
 const { t }   = useI18n()
@@ -168,7 +169,7 @@ function getInitials(): string {
             <div style="display:flex;align-items:center;gap:12px;margin-top:20px">
               <button class="btn btn-primary btn-sm" :disabled="sohranenie" @click="save">
                 <span v-if="sohranenie" class="btn__spinner" />
-                {{ t('profile.save') }} →
+                {{ t('profile.save') }} <ArrowRight :size="14" />
               </button>
               <button class="btn btn-ghost btn-sm" @click="cancelEdit">{{ t('profile.cancel') }}</button>
               <Transition name="fade">
@@ -249,7 +250,7 @@ function getInitials(): string {
                 · {{ t('profile.loyalty_earned') }}: {{ loyalty.total_earned }}
               </p>
             </div>
-            <div class="loyalty-star">⭐</div>
+            <div class="loyalty-star"><Star :size="24" /></div>
           </div>
 
           <div v-if="txns.length > 0" class="loyalty-history">

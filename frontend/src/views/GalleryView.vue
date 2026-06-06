@@ -5,6 +5,7 @@ import { galleryApi }    from '@/api/gallery'
 import { mastersApi }    from '@/api/masters'
 import { servicesApi }   from '@/api/services'
 import type { Master, Service } from '@/types'
+import { ArrowRight, X } from 'lucide-vue-next'
 
 const { t } = useI18n()
 
@@ -130,7 +131,7 @@ function formatDate(iso: string) {
         </button>
 
         <button v-if="activeFilterLabel" class="filter-clear" @click="resetFilters">
-          ✕ Все
+          <X :size="20" /> Все
         </button>
 
         <Transition name="fade">
@@ -181,7 +182,7 @@ function formatDate(iso: string) {
           <div class="gallery-card gallery-card--lg" @click="vybrana = filteredRaboty[0]">
             <div class="gallery-card__img-wrap">
               <img :src="filteredRaboty[0].image_url" :alt="filteredRaboty[0].title || 'Work'" loading="lazy" />
-              <div class="gallery-card__overlay"><span class="gallery-card__zoom">→</span></div>
+              <div class="gallery-card__overlay"><span class="gallery-card__zoom"><ArrowRight :size="14"/></span></div>
               <span class="gallery-card__no">Nº 01</span>
             </div>
             <div class="gallery-card__info">
@@ -205,7 +206,7 @@ function formatDate(iso: string) {
             >
               <div class="gallery-card__img-wrap">
                 <img :src="w.image_url" :alt="w.title || 'Work'" loading="lazy" />
-                <div class="gallery-card__overlay"><span class="gallery-card__zoom">→</span></div>
+                <div class="gallery-card__overlay"><span class="gallery-card__zoom"><ArrowRight :size="14"/></span></div>
                 <span class="gallery-card__no">Nº {{ String(i+2).padStart(2,'0') }}</span>
               </div>
               <div class="gallery-card__info gallery-card__info--sm">
@@ -228,7 +229,7 @@ function formatDate(iso: string) {
           >
             <div class="gallery-card__img-wrap">
               <img :src="w.image_url" :alt="w.title || 'Work'" loading="lazy" />
-              <div class="gallery-card__overlay"><span class="gallery-card__zoom">→</span></div>
+              <div class="gallery-card__overlay"><span class="gallery-card__zoom"><ArrowRight :size="14"/></span></div>
               <span class="gallery-card__no">Nº {{ String(i+4).padStart(2,'0') }}</span>
             </div>
             <div class="gallery-card__info">
@@ -250,7 +251,7 @@ function formatDate(iso: string) {
         <div v-if="vybrana" class="lightbox" @click.self="vybrana = null">
           <div class="lightbox__box">
             <button class="lightbox__close btn btn-ghost btn-sm" @click="vybrana = null">
-              ✕ Закрыть
+              <X :size="20" /> Закрыть
             </button>
             <img :src="vybrana.image_url" :alt="vybrana.title || 'Work'" class="lightbox__img" />
             <div class="lightbox__info">

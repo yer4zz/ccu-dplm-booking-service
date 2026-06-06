@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n';
 import { useRouter } from 'vue-router'
+import { Star, Heart, Clock, GraduationCap, MapPin, Phone, Smartphone, ArrowRight } from 'lucide-vue-next'
+
 const router = useRouter()
 const { t } = useI18n()
 </script>
@@ -110,44 +112,28 @@ const { t } = useI18n()
           </div>
           <div class="values-list">
             <div class="value-item">
-              <div class="value-item__icon">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="var(--accent)">
-                  <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/>
-                </svg>
-              </div>
+              <div class="value-item__icon"><Star :size="22" :stroke="'var(--accent)'" fill="none" /></div>
               <div class="value-item__body">
                 <h3 class="value-item__title">{{ t('about.val1_title') }}</h3>
                 <p class="value-item__desc">{{ t('about.val1_desc') }}</p>
               </div>
             </div>
             <div class="value-item">
-              <div class="value-item__icon">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="var(--accent)">
-                  <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
-                </svg>
-              </div>
+              <div class="value-item__icon"><Heart :size="22" :stroke="'var(--accent)'" fill="none" /></div>
               <div class="value-item__body">
                 <h3 class="value-item__title">{{ t('about.val2_title') }}</h3>
                 <p class="value-item__desc">{{ t('about.val2_desc') }}</p>
               </div>
             </div>
             <div class="value-item">
-              <div class="value-item__icon">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="var(--accent)">
-                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm.5 5v5.25l4.5 2.67-.75 1.23L11 13V7h1.5z"/>
-                </svg>
-              </div>
+              <div class="value-item__icon"><Clock :size="22" :stroke="'var(--accent)'" fill="none" /></div>
               <div class="value-item__body">
                 <h3 class="value-item__title">{{ t('about.val3_title') }}</h3>
                 <p class="value-item__desc">{{ t('about.val3_desc') }}</p>
               </div>
             </div>
             <div class="value-item">
-              <div class="value-item__icon">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="var(--accent)">
-                  <path d="M5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82zM12 3L1 9l11 6 9-4.91V17h2V9L12 3z"/>
-                </svg>
-              </div>
+              <div class="value-item__icon"><GraduationCap :size="22" :stroke="'var(--accent)'" fill="none" /></div>
               <div class="value-item__body">
                 <h3 class="value-item__title">{{ t('about.val4_title') }}</h3>
                 <p class="value-item__desc">{{ t('about.val4_desc') }}</p>
@@ -193,21 +179,21 @@ const { t } = useI18n()
           </h2>
           <div class="contact-list">
             <div class="contact-item">
-              <span class="contact-item__icon">📍</span>
+              <span class="contact-item__icon"><MapPin :size="20" stroke="var(--accent)" fill="none" /></span>
               <div>
                 <p class="contact-item__label">{{ t('about.addr_label') }}</p>
                 <p class="contact-item__val">{{ t('about.addr_val') }}</p>
               </div>
             </div>
             <div class="contact-item">
-              <span class="contact-item__icon">📞</span>
+              <span class="contact-item__icon"><Phone :size="20" stroke="var(--accent)" fill="none" /></span>
               <div>
                 <p class="contact-item__label">{{ t('about.phone_label') }}</p>
                 <p class="contact-item__val">+7 777 000 00 00</p>
               </div>
             </div>
             <div class="contact-item">
-              <span class="contact-item__icon">🕐</span>
+              <span class="contact-item__icon"><Clock :size="20" stroke="var(--accent)" fill="none" /></span>
               <div>
                 <p class="contact-item__label">{{ t('about.hours_label') }}</p>
                 <p class="contact-item__val">{{ t('about.hours_val') }}</p>
@@ -215,7 +201,7 @@ const { t } = useI18n()
               </div>
             </div>
             <div class="contact-item">
-              <span class="contact-item__icon">📱</span>
+              <span class="contact-item__icon"><Smartphone :size="20" stroke="var(--accent)" fill="none" /></span>
               <div>
                 <p class="contact-item__label">{{ t('about.socials_label') }}</p>
                 <div style="display:flex;gap:12px;margin-top:4px">
@@ -227,7 +213,7 @@ const { t } = useI18n()
             </div>
           </div>
           <button class="btn btn-primary btn-lg" style="margin-top:32px" @click="router.push('/book')">
-            Записаться онлайн →
+            Записаться онлайн <ArrowRight :size="16" />
           </button>
         </div>
 

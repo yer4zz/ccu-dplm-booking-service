@@ -13,6 +13,7 @@ import { servicesApi } from '@/api/services'
 import { reviewsApi } from '@/api/reviews'
 import { masterApi } from '@/api/admin'
 import { watch } from 'vue'
+import { Moon, Camera, GraduationCap, Zap, X, Check, CheckCheck, ArrowUpDown, Star } from 'lucide-vue-next'
 
 async function udalitOtzyv(id: string) {
   if (!confirm('Удалить отзыв?')) return
@@ -27,6 +28,7 @@ const bookings = ref<Booking[]>([])
 
 const tabs = computed(() => [
   { key: 'bookings' as const, label: t('master.tab_bookings') },
+  { key: 'history'  as const, label: 'История' },
   { key: 'stats'    as const, label: t('master.tab_stats') },
   { key: 'reviews'  as const, label: t('master.tab_reviews') },
   { key: 'gallery'  as const, label: 'Галерея' },
@@ -46,7 +48,7 @@ const loading   = ref(true)
 const stats     = ref<any>(null)
 const reviews   = ref<any[]>([])
 const sosList   = ref<any[]>([])
-const activeTab = ref<'bookings' | 'stats' | 'reviews' | 'gallery' | 'services'>('bookings')
+const activeTab = ref<'bookings' | 'history' | 'stats' | 'reviews' | 'gallery' | 'services'>('bookings')
 
 // мобильное меню табов
 const tabsOpen = ref(false)
@@ -60,6 +62,7 @@ function selectTab(key: typeof activeTab.value) {
 watch(activeTab, (tab) => {
   if (tab === 'services') loadMyServices()
   if (tab === 'gallery')  loadGalereya()
+  if (tab === 'stats')    loadStats()
 })
 
 const showReschedule      = ref(false)
@@ -75,8 +78,20 @@ const rescheduleSlotISO   = ref('')
 const allMastersForReschedule = ref<any[]>([])
 const today = new Date().toISOString().split('T')[0]
 
-const vibeEmoji: Record<string, string> = {
-  beauty_school: '🎓', nap_time: '😴', insta_vibe: '📸', turbo: '⚡'
+const activeBookings = computed(() =>
+  bookings.value.filter(b => ['pending', 'confirmed'].includes(b.status))
+    .sort((a, b) => new Date(a.starts_at).getTime() - new Date(b.starts_at).getTime())
+)
+const historyBookings = computed(() =>
+  bookings.value.filter(b => ['completed', 'cancelled', 'no_show'].includes(b.status))
+    .sort((a, b) => new Date(b.starts_at).getTime() - new Date(a.starts_at).getTime())
+)
+
+const vibeIcon: Record<string, any> = {
+  beauty_school: GraduationCap,
+  nap_time:      Moon,
+  insta_vibe:    Camera,
+  turbo:         Zap,
 }
 
 const galereya        = ref<any[]>([])
@@ -131,10 +146,21 @@ async function load() {
 async function loadStats() {
   try {
     const [s, r] = await Promise.all([
-      bookingsApi.getMasterStats().catch(() => null),
+      bookingsApi.getMasterStats().catch((e) => { console.error('[stats error]', e); return null }),
       bookingsApi.getMasterReviews().catch(() => []),
     ])
-    stats.value   = s
+    console.log('[stats response]', s)
+    stats.value   = s ?? {
+      total_bookings: 0,
+      completed_bookings: 0,
+      total_revenue: 0,
+      this_month_revenue: 0,
+      avg_price: 0,
+      avg_rating: 0,
+      total_reviews: 0,
+      this_month_bookings: 0,
+      top_service: null,
+    }
     reviews.value = r ?? []
   } catch (e) { console.error('loadStats error', e) }
 }
@@ -218,7 +244,6 @@ function groupByDate(list: Booking[]) {
 function fmtPrice(n: number) {
   return Math.round(n).toLocaleString(dateLocaleTag.value) + ' ' + t('common.currency')
 }
-function stars(n: number) { return '★'.repeat(n) + '☆'.repeat(5 - n) }
 
 const supabase = createClient(
   import.meta.env.VITE_SUPABASE_URL,
@@ -289,10 +314,10 @@ onUnmounted(() => channel?.unsubscribe())
         </div>
 
         <div v-if="loading" class="state-msg">{{ t('common.loading') }}</div>
-        <div v-else-if="bookings.length === 0" class="state-msg">{{ t('master.no_bookings') }}</div>
+        <div v-else-if="activeBookings.length === 0" class="state-msg">{{ t('master.no_bookings') }}</div>
 
         <template v-else>
-          <div v-for="(group, date) in groupByDate(bookings)" :key="date" class="date-group">
+          <div v-for="(group, date) in groupByDate(activeBookings)" :key="date" class="date-group">
             <div class="date-group__title">{{ date }}</div>
             <div v-for="b in group" :key="b.id" class="booking-row">
               <div class="booking-row__time">{{ formatTime(b.starts_at) }}</div>
@@ -300,7 +325,7 @@ onUnmounted(() => channel?.unsubscribe())
                 <p class="booking-row__service">{{ b.service_name || '—' }}</p>
                 <p class="booking-row__client">{{ b.client_name || '' }}</p>
                 <span v-if="(b as any).vibe_mode" class="vibe-badge">
-                  {{ vibeEmoji[(b as any).vibe_mode] }}
+                  <component :is="vibeIcon[(b as any).vibe_mode]" :size="14" />
                 </span>
                 <div class="booking-row__actions-mobile">
                   <AppBadge :status="b.status" />
@@ -311,23 +336,23 @@ onUnmounted(() => channel?.unsubscribe())
                       class="btn btn-sm"
                       style="background:var(--success-bg);color:var(--success)"
                       @click="updateStatus(b.id, 'confirmed')"
-                    >✓</button>
+                    ><Check :size="16" /></button>
                     <button
                       v-if="b.status === 'confirmed'"
                       class="btn btn-sm"
                       style="background:var(--success-bg);color:var(--success)"
                       @click="updateStatus(b.id, 'completed')"
-                    >★</button>
+                    ><CheckCheck :size="16" /></button>
                     <button
                       v-if="['pending','confirmed'].includes(b.status)"
                       class="btn btn-outline btn-sm"
                       @click="openReschedule(b)"
-                    >↕</button>
+                    ><ArrowUpDown :size="16" /></button>
                     <button
                       v-if="['pending','confirmed'].includes(b.status)"
                       class="btn btn-danger btn-sm"
                       @click="updateStatus(b.id, 'cancelled')"
-                    >✕</button>
+                    ><X :size="16" /></button>
                   </div>
                 </div>
               </div>
@@ -339,23 +364,53 @@ onUnmounted(() => channel?.unsubscribe())
                   class="btn btn-sm"
                   style="background:var(--success-bg);color:var(--success)"
                   @click="updateStatus(b.id, 'confirmed')"
-                >✓ {{ t('master.accept') }}</button>
+                ><Check :size="16" /> {{ t('master.accept') }}</button>
                 <button
                   v-if="b.status === 'confirmed'"
                   class="btn btn-sm"
                   style="background:var(--success-bg);color:var(--success)"
                   @click="updateStatus(b.id, 'completed')"
-                >★ {{ t('master.complete') }}</button>
+                ><CheckCheck :size="16" /> {{ t('master.complete') }}</button>
                 <button
                   v-if="['pending','confirmed'].includes(b.status)"
                   class="btn btn-outline btn-sm"
                   @click="openReschedule(b)"
-                >↕ {{ t('master.reschedule') }}</button>
+                ><ArrowUpDown :size="16" /> {{ t('master.reschedule') }}</button>
                 <button
                   v-if="['pending','confirmed'].includes(b.status)"
                   class="btn btn-danger btn-sm"
                   @click="updateStatus(b.id, 'cancelled')"
-                >✕ {{ t('master.cancel') }}</button>
+                ><X :size="16" /> {{ t('master.cancel') }}</button>
+              </div>
+            </div>
+          </div>
+        </template>
+      </div>
+
+      <div v-else-if="activeTab === 'history'">
+        <div v-if="historyBookings.length === 0" class="state-msg">История пуста</div>
+        <template v-else>
+          <div class="section-label" style="margin-bottom:20px">
+            Обработанные записи · {{ historyBookings.length }}
+          </div>
+          <div class="bookings-list">
+            <div
+              v-for="b in historyBookings"
+              :key="b.id"
+              class="booking-row booking-row--past"
+            >
+              <div class="booking-row__time">
+                <span class="booking-row__hour">{{ formatTime(b.starts_at) }}</span>
+                <span class="booking-row__date">{{ formatDate(b.starts_at) }}</span>
+              </div>
+              <div class="booking-row__body">
+                <p class="booking-row__service">{{ b.service_name || '—' }}</p>
+                <p class="booking-row__client">{{ b.client_name || '—' }}</p>
+                <p v-if="b.notes" class="booking-row__notes">{{ b.notes }}</p>
+              </div>
+              <div class="booking-row__right">
+                <AppBadge :status="b.status" />
+                <span class="booking-row__price">{{ fmtPrice(b.price_paid) }}</span>
               </div>
             </div>
           </div>
@@ -386,15 +441,15 @@ onUnmounted(() => channel?.unsubscribe())
               <p class="kpi-label">{{ t('master.stats_avg') }}</p>
               <p class="kpi-val">{{ fmtPrice(stats.avg_price) }}</p>
             </div>
-            <!-- <div class="kpi-card">
+            <div class="kpi-card">
               <p class="kpi-label">{{ t('master.stats_rating') }}</p>
               <p class="kpi-val">
                 {{ stats.avg_rating > 0 ? stats.avg_rating.toFixed(1) : '—' }}
-                <span style="font-size:16px;color:var(--warning)">★</span>
+                <span style="font-size:16px;color:var(--warning)"><Star :size="16" /></span>
               </p>
-            </div> -->
+            </div>
           </div>
-          <!-- <div class="card">
+          <div class="card">
             <p class="t-label" style="margin-bottom:12px">{{ t('master.stats_extra') }}</p>
             <div class="stat-row">
               <span style="color:var(--text-2)">{{ t('master.stats_reviews') }}</span>
@@ -408,7 +463,7 @@ onUnmounted(() => channel?.unsubscribe())
               <span style="color:var(--text-2)">{{ t('master.stats_top') }}</span>
               <span>{{ stats.top_service || '—' }}</span>
             </div>
-          </div> -->
+          </div>
         </template>
       </div>
 
@@ -418,7 +473,15 @@ onUnmounted(() => channel?.unsubscribe())
           <div v-for="rv in reviews" :key="rv.id" class="review-card card">
             <div class="review-card__header">
               <span class="review-stars" :style="rv.rating >= 4 ? 'color:var(--warning)' : 'color:var(--text-3)'">
-                {{ stars(rv.rating) }}
+                <span class="review-card__stars">
+                  <template v-for="n in 5" :key="n">
+                    <Star
+                      :size="16"
+                      :fill="n <= rv.rating ? 'var(--warning)' : 'none'"
+                      :stroke="n <= rv.rating ? 'var(--warning)' : 'var(--border-strong)'"
+                    />
+                  </template>
+                </span>
               </span>
               <div style="display:flex;align-items:center;gap:8px">
                 <span style="font-size:12px;color:var(--text-3)">{{ fmtDate(rv.created_at) }}</span>
@@ -426,7 +489,7 @@ onUnmounted(() => channel?.unsubscribe())
                   class="btn btn-danger btn-sm"
                   style="height:28px;padding:0 10px;font-size:12px"
                   @click="udalitOtzyv(rv.id)"
-                >🗑</button>
+                >Удалить</button>
               </div>
             </div>
             <p v-if="rv.comment" style="font-size:14px;color:var(--text-2);margin-top:8px;line-height:1.5">
@@ -450,7 +513,7 @@ onUnmounted(() => channel?.unsubscribe())
               <p v-if="rabota.service_name" style="font-size:11px;color:rgba(255,255,255,0.7)">
                 {{ rabota.service_name }}
               </p>
-              <button class="galereya-item__delete" @click.stop="udalitRabotu(rabota.id)">✕</button>
+              <button class="galereya-item__delete" @click.stop="udalitRabotu(rabota.id)"><X :size="16" /></button>
             </div>
           </div>
         </div>
@@ -484,7 +547,7 @@ onUnmounted(() => channel?.unsubscribe())
               class="btn btn-sm"
               :class="s.is_assigned ? 'btn-danger' : 'btn-outline'"
               @click="toggleService(s.id, s.is_assigned)"
-            >{{ s.is_assigned ? '✕ Убрать' : '+ Добавить' }}</button>
+            >{{ s.is_assigned ? 'Убрать' : 'Добавить' }}</button>
           </div>
         </div>
       </div>
@@ -498,7 +561,7 @@ onUnmounted(() => channel?.unsubscribe())
         <div class="modal-box card">
           <div class="modal-header">
             <h3 class="t-h3">{{ t('master.reschedule_title') }}</h3>
-            <button class="btn btn-ghost btn-icon" @click="showReschedule = false">✕</button>
+            <button class="btn btn-ghost btn-icon" @click="showReschedule = false"><X :size="16" /></button>
           </div>
           <div style="background:var(--success-bg);padding:12px 16px;border-radius:var(--radius-md);margin-bottom:16px">
             <p style="font-size:13px;color:var(--success);font-weight:500">{{ t('master.reschedule_discount') }}</p>
@@ -557,18 +620,18 @@ onUnmounted(() => channel?.unsubscribe())
         <div class="modal-box card">
           <div class="modal-header">
             <h3 class="t-h3">Добавить работу</h3>
-            <button class="btn btn-ghost btn-icon" @click="showModalka = false">✕</button>
+            <button class="btn btn-ghost btn-icon" @click="showModalka = false"><X :size="16" /></button>
           </div>
           <div style="display:flex;flex-direction:column;gap:16px;margin-top:8px">
             <div class="field">
               <label class="field-label">Фото</label>
               <div class="upload-zone" @click="fileInput?.click()">
                 <div v-if="!vybraniyFayl">
-                  <p style="font-size:14px;color:var(--text-2)">📷 Нажмите чтобы выбрать фото</p>
+                  <p style="font-size:14px;color:var(--text-2)">Нажмите чтобы выбрать фото</p>
                   <p style="font-size:12px;color:var(--text-3);margin-top:4px">JPG, PNG, WEBP</p>
                 </div>
                 <div v-else style="display:flex;align-items:center;gap:10px">
-                  <span style="font-size:20px">✅</span>
+                  <span style="font-size:14px;color:var(--success);font-weight:700">Файл выбран</span>
                   <span style="font-size:14px;color:var(--text)">{{ vybraniyFayl.name }}</span>
                 </div>
               </div>
@@ -673,6 +736,22 @@ onUnmounted(() => channel?.unsubscribe())
 .booking-row__actions { display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
 
 .booking-row__actions-mobile { display: none; }
+
+.booking-row {
+  display: grid;
+  grid-template-columns: 110px 1fr auto;
+  gap: 16px; align-items: start;
+  padding: 16px 0; border-top: 1px solid var(--border);
+}
+.bookings-list .booking-row:last-child { border-bottom: 1px solid var(--border); }
+.booking-row__time    { display: flex; flex-direction: column; gap: 2px; }
+.booking-row__hour    { font-family: var(--font-serif); font-size: 22px; font-weight: 700; color: var(--text); line-height: 1; }
+.booking-row__date    { font-size: 10px; color: var(--text-3); text-transform: capitalize; }
+.booking-row__service { font-size: 15px; font-weight: 600; color: var(--text); margin-bottom: 3px; }
+.booking-row__client  { font-size: 12px; color: var(--text-3); }
+.booking-row__notes   { font-size: 11px; color: var(--text-3); font-style: italic; margin-top: 4px; }
+.booking-row__right   { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; }
+.booking-row__price   { font-family: var(--font-serif); font-size: 15px; font-weight: 700; color: var(--text); }
 
 .kpi-grid  { display: grid; grid-template-columns: repeat(auto-fill,minmax(140px,1fr)); gap: 12px; }
 .kpi-card  {

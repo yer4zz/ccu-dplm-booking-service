@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, nextTick, onMounted } from 'vue'
 import { useAuthStore } from '@/stores/auth'
+import { X } from 'lucide-vue-next'
 
 const auth = useAuthStore()
 
@@ -9,8 +10,8 @@ interface Message {
   text: string
   time: string
   quickReplies?: string[]
-  typing?: boolean   // показываем анимацию пока грузится
-  source?: string    // 'local' | 'gemini' | 'fallback'
+  typing?: boolean
+  source?: string
 }
 
 interface HistoryItem {
@@ -23,7 +24,7 @@ const HISTORY_TTL = 24 * 60 * 60 * 1000 // 24 часа
 
 const isOpen     = ref(false)
 const messages   = ref<Message[]>([])
-const history    = ref<HistoryItem[]>([])  // для контекста Gemini
+const history    = ref<HistoryItem[]>([])
 const input      = ref('')
 const loading    = ref(false)
 const messagesEl = ref<HTMLElement | null>(null)
@@ -36,7 +37,6 @@ function getTime() {
   return new Date().toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })
 }
 
-// ── Загрузка/сохранение истории ──────────────────────
 onMounted(() => {
   try {
     const saved = localStorage.getItem(STORAGE_KEY)
@@ -69,7 +69,7 @@ function clearChat() {
   nextTick(() => {
     messages.value.push({
       role: 'bot',
-      text: 'История очищена. Чем могу помочь? 😊',
+      text: 'История очищена. Чем могу помочь?',
       time: getTime(),
       quickReplies: ['Записаться', 'Услуги и цены', 'Наши мастера'],
     })
@@ -253,7 +253,7 @@ function formatText(text: string): string {
               <path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6"/>
             </svg>
           </button>
-          <button class="chat-header__btn" @click="isOpen = false">✕</button>
+          <button class="chat-header__btn" @click="isOpen = false"><X :size="16" /></button>
         </div>
       </div>
 

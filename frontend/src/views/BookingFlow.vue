@@ -6,6 +6,7 @@ import { useAuthStore }            from '@/stores/auth'
 import { useBookingStore }         from '@/stores/booking'
 import { loyaltyApi }             from '@/api/loyalty'
 import VibeCheck                   from '@/components/booking/VibeCheck.vue'
+import { ArrowRight } from 'lucide-vue-next'
 
 const { t, locale }  = useI18n()
 const router = useRouter()
@@ -111,7 +112,7 @@ async function submitSOS() {
         <p class="done__sub">{{ t('booking.success_sub') }}</p>
         <div class="done__btns">
           <button class="btn btn-primary" @click="router.push('/my')">
-            {{ t('booking.my_bookings') }} →
+            {{ t('booking.my_bookings') }} <ArrowRight :size="16" />
           </button>
           <button class="btn btn-outline" @click="store.reset()">
             {{ t('booking.new_booking') }}
@@ -444,7 +445,7 @@ async function submitSOS() {
             class="btn btn-primary"
             :disabled="!store.canProceed"
             @click="store.nextStep()"
-          >{{ t('booking.next') }} →</button>
+          >{{ t('booking.next') }} <ArrowRight :size="16" /></button>
           <button
             v-else
             class="btn btn-primary"
@@ -452,7 +453,7 @@ async function submitSOS() {
             @click="store.confirm()"
           >
             <span v-if="store.loading" class="btn__spinner" />
-            {{ t('booking.book') }} →
+            {{ t('booking.book') }} <ArrowRight :size="16" />
           </button>
         </div>
 

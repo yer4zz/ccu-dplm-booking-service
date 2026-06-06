@@ -3,6 +3,7 @@ import { ref } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { useI18n }      from 'vue-i18n'
+import { Check, ArrowRight } from 'lucide-vue-next'
 
 const router = useRouter()
 const route  = useRoute()
@@ -73,9 +74,9 @@ async function submit() {
           <p class="login-mobile-head__logo">Beauty Dana</p>
           <p class="login-mobile-head__sub">{{ t('login.mobile_sub') }}</p>
           <div class="login-mobile-head__perks">
-            <span>✓ {{ t('login.mobile_perk1') }}</span>
+            <span><Check :size="14" /> {{ t('login.mobile_perk1') }}</span>
             <span class="login-perk-dot">·</span>
-            <span>✓ {{ t('login.mobile_perk2') }}</span>
+            <span><Check :size="14" /> {{ t('login.mobile_perk2') }}</span>
           </div>
         </div>
 
@@ -145,20 +146,20 @@ async function submit() {
           @click="submit"
         >
           <span v-if="zagruzka" class="btn__spinner" />
-          {{ rezhim === 'login' ? t('auth.login_btn') : t('auth.register_btn') }} →
+          {{ rezhim === 'login' ? t('auth.login_btn') : t('auth.register_btn') }} <ArrowRight :size="16" />
         </button>
 
         <p class="login-switch">
           <template v-if="rezhim === 'login'">
             {{ t('auth.no_account') }}
             <button class="login-switch__btn" @click="rezhim = 'register'">
-              {{ t('auth.register') }} →
+              {{ t('auth.register') }} <ArrowRight :size="14"/>
             </button>
           </template>
           <template v-else>
             {{ t('auth.has_account') }}
             <button class="login-switch__btn" @click="rezhim = 'login'">
-              {{ t('auth.login') }} →
+              {{ t('auth.login') }} <ArrowRight :size="14"/>
             </button>
           </template>
         </p>
@@ -274,7 +275,8 @@ async function submit() {
   background: none; border: none;
   font-family: var(--font); font-size: 13px; font-weight: 500;
   color: var(--accent); cursor: pointer; padding: 0;
-  margin-left: 4px; transition: opacity 0.15s;
+  transition: opacity 0.15s;
+  display: inline-flex; align-items: center; gap: 6px;
 }
 .login-switch__btn:hover { opacity: 0.7; }
 

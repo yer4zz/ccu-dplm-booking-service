@@ -33,7 +33,7 @@ type emailPayload struct {
 
 func (n *EmailNotifier) send(ctx context.Context, p emailPayload) error {
 	if n.apiKey == "" {
-		fmt.Printf("[notify] пропуск (нет ключа) → %v\n", p.To)
+		fmt.Printf("[notify] пропуск (нет ключа) - %v\n", p.To)
 		return nil
 	}
 	body, _ := json.Marshal(p)
@@ -54,7 +54,7 @@ func (n *EmailNotifier) send(ctx context.Context, p emailPayload) error {
 	if resp.StatusCode >= 400 {
 		return fmt.Errorf("resend %d: %s", resp.StatusCode, string(respBody))
 	}
-	fmt.Printf("[notify] ✅ → %v (status %d)\n", p.To, resp.StatusCode)
+	fmt.Printf("[notify] - %v (status %d)\n", p.To, resp.StatusCode)
 	return nil
 }
 
@@ -152,7 +152,7 @@ body{font-family:-apple-system,sans-serif;background:#FAF9F7;margin:0;padding:40
 .l{color:#6B6560}.v{font-weight:500}.f{padding:20px 40px;background:#F4F2EF;text-align:center;font-size:13px;color:#9E9890}
 .btn{display:inline-block;background:#C9956A;color:#fff;padding:14px 32px;border-radius:99px;text-decoration:none;font-weight:600;font-size:15px;margin-top:20px}
 </style></head><body><div class="w">
-<div class="h"><h1>Запись подтверждена ✓</h1></div>
+<div class="h"><h1>Запись подтверждена</h1></div>
 <div class="b">
 <p style="color:#6B6560;font-size:15px;margin:0 0 20px">Здравствуйте, <b style="color:#1A1714">%s</b>!</p>
 <div class="r"><span class="l">Услуга</span><span class="v">%s</span></div>
@@ -206,7 +206,7 @@ body{font-family:-apple-system,sans-serif;background:#FAF9F7;margin:0;padding:40
 <div class="r"><span class="l">Мастер</span><span class="v">%s</span></div>
 <div class="r"><span class="l">Новая дата</span><span class="v">%s</span></div>
 <div class="r" style="border:none"><span class="l">Стоимость</span><span class="v">%.0f ₸</span></div>
-<div class="disc">🎁 Скидка 30%% применена за перенос</div>
+<div class="disc">Скидка 30%% применена за перенос</div>
 </div>
 <div class="f">Beauty Dana</div>
 </div></body></html>`,

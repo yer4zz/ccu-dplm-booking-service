@@ -91,14 +91,13 @@ func (r *Repo) GetMasterBookings(ctx context.Context, masterID uuid.UUID) ([]mod
 	rows, err := r.db.Query(ctx, `
 		SELECT b.id, b.client_id, b.master_id, b.service_id,
 		       b.starts_at, b.ends_at, b.status, b.price_paid,
-		       COALESCE(b.notes, ''), b.created_at,
+		       COALESCE(b.notes, ''), COALESCE(b.vibe_mode, ''), b.created_at,
 		       COALESCE(s.name, ''), COALESCE(p.full_name, '')
 		FROM public.bookings b
 		LEFT JOIN public.services s ON s.id = b.service_id
 		LEFT JOIN public.profiles p ON p.id = b.client_id
 		WHERE b.master_id = $1
-		  AND b.starts_at >= now() - interval '1 day'
-		ORDER BY b.starts_at
+		ORDER BY b.starts_at DESC
 	`, masterID)
 	if err != nil {
 		return nil, err
@@ -111,7 +110,7 @@ func (r *Repo) GetMasterBookings(ctx context.Context, masterID uuid.UUID) ([]mod
 		if err := rows.Scan(
 			&b.ID, &b.ClientID, &b.MasterID, &b.ServiceID,
 			&b.StartsAt, &b.EndsAt, &b.Status, &b.PricePaid,
-			&b.Notes, &b.CreatedAt,
+			&b.Notes, &b.VibeMode, &b.CreatedAt,
 			&b.ServiceName, &b.ClientName,
 		); err != nil {
 			return nil, err

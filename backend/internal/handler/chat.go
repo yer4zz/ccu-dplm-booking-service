@@ -15,14 +15,11 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
-// ── КОНФИГ ───────────────────────────────────────────────────────────────────
 
 const geminiURL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent"
 
-// Короткий промпт — только для fallback вопросов про красоту
-const geminiSystemPrompt = `Ты помощник салона красоты Beauty Dana (г. Есик, Казахстан). Отвечай коротко, по-русски, на "Вы". Только про красоту, уход, стиль. Максимум 3 предложения.`
+const geminiSystemPrompt = `Ты помощник салона красоты Beauty Dana (г. Есик, Казахстан). Отвечай коротко, на "Вы". Только про красоту, уход, стиль. Максимум 3 предложения.`
 
-// ── СТРУКТУРЫ ────────────────────────────────────────────────────────────────
 
 type ChatMsgHistory struct {
 	Role    string `json:"role"`
@@ -70,7 +67,6 @@ type BotData struct {
 	Masters  []MasterData
 }
 
-// ── GEMINI СТРУКТУРЫ (минимальные) ──────────────────────────────────────────
 
 type GeminiMsg struct {
 	Role  string          `json:"role"`
@@ -102,7 +98,6 @@ type GeminiSimpleResp struct {
 	} `json:"candidates"`
 }
 
-// ── ГЛАВНЫЙ HANDLER ──────────────────────────────────────────────────────────
 
 func ChatGemini(pool *pgxpool.Pool, geminiKey string) gin.HandlerFunc {
 	return func(c *gin.Context) {
@@ -121,14 +116,14 @@ func ChatGemini(pool *pgxpool.Pool, geminiKey string) gin.HandlerFunc {
 			sess = &BotSession{Step: "idle"}
 		}
 
-		// Загружаем данные из БД (кэшируются в памяти на 60 сек в продакшне)
+		
 		data, err := loadData(ctx, pool)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
 		}
 
-		// ── BOOKING FLOW — если идёт процесс записи ──────────────────────────
+		
 		if sess.Step != "idle" && sess.Step != "" {
 			resp, quickReplies, newSess := handleBookingStep(ctx, pool, lower, req.Message, req.UserID, sess, data)
 			saveHistorySimple(ctx, pool, req.SessionID, req.UserID, req.Message, resp)
@@ -141,7 +136,7 @@ func ChatGemini(pool *pgxpool.Pool, geminiKey string) gin.HandlerFunc {
 			return
 		}
 
-		// ── СКРИПТОВЫЕ ОТВЕТЫ ─────────────────────────────────────────────────
+
 		if resp, qr, newSess := handleScriptIntent(ctx, pool, lower, req.Message, req.UserID, sess, data); resp != "" {
 			saveHistorySimple(ctx, pool, req.SessionID, req.UserID, req.Message, resp)
 			c.JSON(http.StatusOK, gin.H{
@@ -153,7 +148,7 @@ func ChatGemini(pool *pgxpool.Pool, geminiKey string) gin.HandlerFunc {
 			return
 		}
 
-		// ── GEMINI FALLBACK — только для нестандартных вопросов ───────────────
+
 		if geminiKey == "" {
 			resp := buildDefaultMsg()
 			c.JSON(http.StatusOK, gin.H{"message": resp, "source": "script"})
@@ -191,53 +186,53 @@ func handleScriptIntent(ctx context.Context, pool *pgxpool.Pool, lower, original
 				name = ", " + strings.Split(name, " ")[0]
 			}
 		}
-		return fmt.Sprintf("Привет%s! 👋 Я помощник Beauty Dana. Могу рассказать об услугах, ценах, мастерах или помочь с записью.", name),
+		return fmt.Sprintf("Привет%s! Я помощник Beauty Dana. Могу рассказать об услугах, ценах, мастерах или помочь с записью.", name),
 			[]string{"Записаться", "Услуги и цены", "Наши мастера", "Скидки"},
 			sess
 	}
 
 	// Прощание
 	if hasAny(lower, []string{"пока", "до свидания", "до встречи", "сау бол", "bye", "goodbye"}) {
-		return "До свидания! 👋 Будем рады видеть вас в Beauty Dana!", nil, sess
+		return "До свидания! Будем рады видеть вас в Beauty Dana!", nil, sess
 	}
 
 	// Благодарность
 	if hasAny(lower, []string{"спасибо", "благодар", "рахмет", "thanks", "thank you"}) {
-		return "Пожалуйста! 😊 Если появятся вопросы — обращайтесь.", []string{"Записаться", "Услуги и цены"}, sess
+		return "Пожалуйста! Если появятся вопросы — обращайтесь.", []string{"Записаться", "Услуги и цены"}, sess
 	}
 
 	// Кто вы / о салоне
 	if hasAny(lower, []string{"кто вы", "что это", "о салоне", "расскажите о себе", "что за салон", "what is"}) {
-		return "Мы — **Beauty Dana**, студия красоты в городе Есик 💫\n\nРаботаем с 2012 года. Стрижки, окрашивание, маникюр, педикюр, брови, макияж.\nЗапись онлайн круглосуточно — без звонков и ожидания.",
+		return "Мы - **Beauty Dana**, студия красоты в городе Есик \n\nРаботаем с 2012 года. Стрижки, окрашивание, маникюр, педикюр, брови, макияж.\nЗапись онлайн круглосуточно — без звонков и ожидания.",
 			[]string{"Услуги и цены", "Наши мастера", "Записаться"},
 			sess
 	}
 
 	// Часы работы
 	if hasAny(lower, []string{"часы", "режим", "график", "когда работаете", "до скольки", "открыт", "закрыт", "жұмыс"}) {
-		return "🕐 Работаем **Пн–Сб с 10:00 до 19:00**\nВоскресенье — выходной.\n\nЗапись онлайн доступна круглосуточно!", []string{"Записаться"}, sess
+		return "Работаем **Пн-Сб с 10:00 до 19:00**\nВоскресенье - выходной.\n\nЗапись онлайн доступна круглосуточно!", []string{"Записаться"}, sess
 	}
 
 	// Адрес
 	if hasAny(lower, []string{"адрес", "где находитесь", "где вы", "как доехать", "как добраться", "мекенжай", "location"}) {
-		return "📍 **г. Есик, Алматинская область**\n\nТочный адрес и маршрут — на странице «О нас».", []string{"Записаться"}, sess
+		return "**г. Есик, Алматинская область**\n\nТочный адрес и маршрут - на странице «О нас».", []string{"Записаться"}, sess
 	}
 
 	// Контакты
 	if hasAny(lower, []string{"телефон", "номер", "позвонить", "контакт", "связаться", "whatsapp"}) {
-		return "📞 Телефон: **+7 777 000 00 00**\n📱 WhatsApp: тот же номер\n\nИли просто запишитесь онлайн — это быстрее!", []string{"Записаться"}, sess
+		return "Телефон: **+7 777 000 00 00**\n📱 WhatsApp: тот же номер\n\nИли просто запишитесь онлайн — это быстрее!", []string{"Записаться"}, sess
 	}
 
 	// Скидки
 	if hasAny(lower, []string{"скидк", "акци", "бонус", "промокод", "жеңілдік", "discount", "offer"}) {
-		return "🎁 **Скидки Beauty Dana:**\n\n• Первая запись — **скидка 30%**\n• Несколько услуг — **+5%** за каждую доп. услугу\n• Перенос мастером — скидка 30%\n• Баллы лояльности — 10 баллов = 100 ₸\n• Beauty Streak — скидка до 10% за регулярные визиты",
+		return "**Скидки Beauty Dana:**\n\n• Первая запись - **скидка 30%**\n• Несколько услуг — **+5%** за каждую доп. услугу\n• Перенос мастером — скидка 30%\n• Баллы лояльности — 10 баллов = 100 ₸\n• Beauty Streak — скидка до 10% за регулярные визиты",
 			[]string{"Записаться", "Программа лояльности"},
 			sess
 	}
 
 	// Программа лояльности
 	if hasAny(lower, []string{"лояльност", "балл", "streak", "бонусн", "накопит", "ұпай"}) {
-		return "⭐ **Beauty Streak — программа лояльности:**\n\n• 10 баллов за каждый завершённый визит\n• 10 баллов = 100 ₸ скидки\n• Уровни: Bronze → Silver → Gold → Platinum\n• Чем регулярнее визиты — тем выше уровень и скидка (до 10%)",
+		return "**Beauty Streak — программа лояльности:**\n\n• 10 баллов за каждый завершённый визит\n• 10 баллов = 100 ₸ скидки\n• Уровни: Bronze - Silver - Gold - Platinum\n• Чем регулярнее визиты — тем выше уровень и скидка (до 10%)",
 			[]string{"Записаться", "Мои баллы"},
 			sess
 	}
@@ -245,13 +240,13 @@ func handleScriptIntent(ctx context.Context, pool *pgxpool.Pool, lower, original
 	// Мои баллы
 	if hasAny(lower, []string{"мои балл", "мой баланс", "сколько баллов", "мой streak"}) {
 		if userID == "" {
-			return "Для просмотра баллов нужно **войти в аккаунт**.", []string{"🔑 Войти"}, sess
+			return "Для просмотра баллов нужно **войти в аккаунт**.", []string{"Войти"}, sess
 		}
 		var points int
 		var level string
 		pool.QueryRow(ctx, `select coalesce(points_balance,0) from public.loyalty_accounts where user_id=$1::uuid`, userID).Scan(&points)
 		pool.QueryRow(ctx, `select coalesce(current_level,'bronze') from public.beauty_streaks where user_id=$1::uuid`, userID).Scan(&level)
-		return fmt.Sprintf("⭐ **Ваши баллы:** %d (= %d ₸)\n🏆 **Уровень:** %s", points, points*10, strings.Title(level)),
+		return fmt.Sprintf("**Ваши баллы:** %d (= %d ₸)\n **Уровень:** %s", points, points*10, strings.Title(level)),
 			[]string{"Записаться"},
 			sess
 	}
@@ -293,7 +288,7 @@ func handleScriptIntent(ctx context.Context, pool *pgxpool.Pool, lower, original
 	// Запись
 	if hasAny(lower, []string{"записат", "запись", "хочу записат", "забронир", "book", "appointment", "жазыл"}) {
 		if userID == "" {
-			return "Для записи нужно **войти в аккаунт** 👤", []string{"🔑 Войти"}, sess
+			return "Для записи нужно **войти в аккаунт**", []string{"Войти"}, sess
 		}
 		newSess := &BotSession{Step: "service"}
 		return "Отлично! Выберите услугу:", buildServiceButtons(data), newSess
@@ -302,7 +297,7 @@ func handleScriptIntent(ctx context.Context, pool *pgxpool.Pool, lower, original
 	// Мои записи
 	if hasAny(lower, []string{"мои записи", "мои визиты", "моя запись", "когда я записан", "мое расписание"}) {
 		if userID == "" {
-			return "Для просмотра записей нужно **войти в аккаунт**.", []string{"🔑 Войти"}, sess
+			return "Для просмотра записей нужно **войти в аккаунт**.", []string{"Войти"}, sess
 		}
 		return buildMyBookingsMsg(ctx, pool, userID), []string{"Записаться", "Отменить запись"}, sess
 	}
@@ -310,7 +305,7 @@ func handleScriptIntent(ctx context.Context, pool *pgxpool.Pool, lower, original
 	// Отмена
 	if hasAny(lower, []string{"отменить", "отмена записи", "хочу отменить", "cancel"}) {
 		if userID == "" {
-			return "Для отмены записи нужно **войти в аккаунт**.", []string{"🔑 Войти"}, sess
+			return "Для отмены записи нужно **войти в аккаунт**.", []string{"Войти"}, sess
 		}
 		return "Для отмены записи перейдите в раздел **«Мои записи»** в личном кабинете — там кнопка «Отменить» рядом с каждой активной записью.", []string{"Мои записи"}, sess
 	}
@@ -318,7 +313,6 @@ func handleScriptIntent(ctx context.Context, pool *pgxpool.Pool, lower, original
 	return "", nil, sess
 }
 
-// ── BOOKING FLOW ─────────────────────────────────────────────────────────────
 
 func handleBookingStep(ctx context.Context, pool *pgxpool.Pool, lower, original, userID string, sess *BotSession, data *BotData) (string, []string, *BotSession) {
 
@@ -334,7 +328,7 @@ func handleBookingStep(ctx context.Context, pool *pgxpool.Pool, lower, original,
 				sess.Step        = "master"
 				masterBtns := buildMasterButtons(data)
 				masterBtns = append(masterBtns, "Любой мастер")
-				return fmt.Sprintf("✓ **%s** выбрана\n\nК какому мастеру хотите записаться?", svc.Name),
+				return fmt.Sprintf("**%s** выбрана\n\nК какому мастеру хотите записаться?", svc.Name),
 					masterBtns, sess
 			}
 		}
@@ -360,7 +354,7 @@ func handleBookingStep(ctx context.Context, pool *pgxpool.Pool, lower, original,
 			return "Не нашёл такого мастера. Выберите из списка:", btns, sess
 		}
 		sess.Step = "date"
-		return fmt.Sprintf("✓ Мастер **%s**\n\nНа какую дату? Напишите, например: **сегодня**, **завтра** или **25 мая**", sess.MasterName),
+		return fmt.Sprintf("Мастер **%s**\n\nНа какую дату? Напишите, например: **сегодня**, **завтра** или **25 мая**", sess.MasterName),
 			[]string{"Сегодня", "Завтра", "Послезавтра"},
 			sess
 
@@ -375,7 +369,7 @@ func handleBookingStep(ctx context.Context, pool *pgxpool.Pool, lower, original,
 		slots := getSlotsSimple(ctx, pool, sess.MasterID, sess.ServiceID, parsed, data)
 		if len(slots) == 0 {
 			sess.Step = "date"
-			return fmt.Sprintf("На **%s** нет свободного времени 😔\n\nВыберите другую дату:", formatDateRu(parsed)),
+			return fmt.Sprintf("На **%s** нет свободного времени \n\nВыберите другую дату:", formatDateRu(parsed)),
 				[]string{"Завтра", "Послезавтра"}, sess
 		}
 		return fmt.Sprintf("Свободное время на **%s**:", formatDateRu(parsed)), slots, sess
@@ -385,22 +379,22 @@ func handleBookingStep(ctx context.Context, pool *pgxpool.Pool, lower, original,
 			sess.SlotStart = fmt.Sprintf("%sT%s:00+05:00", sess.Date, original)
 			sess.Step = "confirm"
 			return fmt.Sprintf(
-				"Проверьте запись:\n\n✂️ **%s**\n👩 **%s**\n📅 **%s в %s**\n💰 **%.0f ₸**\n\nПодтвердить запись?",
+				"Проверьте запись:\n\n **%s**\n **%s**\n **%s в %s**\n **%.0f ₸**\n\nПодтвердить запись?",
 				sess.ServiceName, sess.MasterName, formatDateRu(sess.Date), original, sess.Price,
-			), []string{"✅ Да, записаться", "❌ Отмена"}, sess
+			), []string{"Да, записаться", "Отмена"}, sess
 		}
 		return "Выберите время из списка выше", nil, sess
 
 	case "confirm":
-		if hasAny(lower, []string{"да", "✅", "записат", "подтвер", "окей", "ок"}) {
+		if hasAny(lower, []string{"да", "записат", "подтвер", "окей", "ок"}) {
 			if userID == "" {
-				return "Для записи нужно **войти в аккаунт**.", []string{"🔑 Войти"}, &BotSession{Step: "idle"}
+				return "Для записи нужно **войти в аккаунт**.", []string{"Войти"}, &BotSession{Step: "idle"}
 			}
 			err := createBookingSimple(ctx, pool, userID, sess)
 			if err != nil {
 				if strings.Contains(err.Error(), "slot_unavailable") {
 					sess.Step = "date"
-					return "😔 Этот слот только что заняли. Выберите другое время:",
+					return "Этот слот только что заняли. Выберите другое время:",
 						[]string{"Сегодня", "Завтра"}, sess
 				}
 				return "Ошибка при создании записи. Попробуйте ещё раз или запишитесь через форму на сайте.",
@@ -410,7 +404,7 @@ func handleBookingStep(ctx context.Context, pool *pgxpool.Pool, lower, original,
 			if len(sess.SlotStart) >= 16 {
 				timeStr = sess.SlotStart[11:16]
 			}
-			return fmt.Sprintf("✅ **Запись создана!**\n\n✂️ %s\n👩 %s\n📅 %s в %s\n💰 %.0f ₸\n\nДо встречи! 😊",
+			return fmt.Sprintf("**Запись создана!**\n\n %s\n %s\n %s в %s\n %.0f ₸\n\nДо встречи! ",
 				sess.ServiceName, sess.MasterName, formatDateRu(sess.Date), timeStr, sess.Price),
 				[]string{"Мои записи", "Записаться ещё"},
 				&BotSession{Step: "idle"}
@@ -423,7 +417,6 @@ func handleBookingStep(ctx context.Context, pool *pgxpool.Pool, lower, original,
 	return buildDefaultMsg(), []string{"Записаться", "Услуги и цены"}, &BotSession{Step: "idle"}
 }
 
-// ── GEMINI FALLBACK (минимальный) ────────────────────────────────────────────
 
 func callGeminiSimple(message, apiKey string) (string, error) {
 	req := GeminiSimpleReq{
@@ -509,11 +502,11 @@ func buildServicesMsg(data *BotData) string {
 		return "Информация об услугах временно недоступна."
 	}
 	var sb strings.Builder
-	sb.WriteString("✂️ **Наши услуги:**\n\n")
+	sb.WriteString("**Наши услуги:**\n\n")
 	for _, s := range data.Services {
 		sb.WriteString(fmt.Sprintf("• **%s** — %d мин, **%.0f ₸**\n", s.Name, s.DurationMin, s.Price))
 	}
-	sb.WriteString("\nЧтобы записаться — нажмите «Записаться» ниже 😊")
+	sb.WriteString("\nЧтобы записаться — нажмите «Записаться» ниже")
 	return sb.String()
 }
 
@@ -534,18 +527,18 @@ func buildCategoryMsg(cat string, data *BotData) string {
 
 func buildPricesMsg(data *BotData) string {
 	var sb strings.Builder
-	sb.WriteString("💰 **Цены на услуги:**\n\n")
+	sb.WriteString("**Цены на услуги:**\n\n")
 	for _, s := range data.Services {
 		sb.WriteString(fmt.Sprintf("• %s — **%.0f ₸** (%d мин)\n", s.Name, s.Price, s.DurationMin))
 	}
-	sb.WriteString("\n💡 Первая запись — скидка **30%**!")
+	sb.WriteString("\n Первая запись — скидка **30%**!")
 	return sb.String()
 }
 
 func buildMastersMsg(data *BotData) string {
 	if len(data.Masters) == 0 { return "Информация о мастерах временно недоступна." }
 	var sb strings.Builder
-	sb.WriteString("👩‍💼 **Наши мастера:**\n\n")
+	sb.WriteString("**Наши мастера:**\n\n")
 	for _, m := range data.Masters {
 		sb.WriteString(fmt.Sprintf("**%s** — %d лет опыта\n", m.Name, m.Exp))
 		if len(m.Services) > 0 {
@@ -557,10 +550,10 @@ func buildMastersMsg(data *BotData) string {
 }
 
 func buildMasterDetailMsg(m MasterData) string {
-	resp := fmt.Sprintf("**%s** 👩‍💼\n%d лет опыта\n\n", m.Name, m.Exp)
+	resp := fmt.Sprintf("**%s** \n%d лет опыта\n\n", m.Name, m.Exp)
 	if m.Bio != "" { resp += m.Bio + "\n\n" }
 	if len(m.Services) > 0 {
-		resp += "✂️ Услуги: " + strings.Join(m.Services, ", ")
+		resp += " Услуги: " + strings.Join(m.Services, ", ")
 	}
 	return resp
 }
@@ -578,28 +571,31 @@ func buildMyBookingsMsg(ctx context.Context, pool *pgxpool.Pool, userID string) 
 	defer rows.Close()
 
 	var sb strings.Builder
-	sb.WriteString("📋 **Ваши записи:**\n\n")
+	sb.WriteString("**Ваши записи:**\n\n")
 	count := 0
 	for rows.Next() {
 		var svcName, masterName, status string
 		var startsAt time.Time
 		var price float64
 		rows.Scan(&svcName, &masterName, &startsAt, &status, &price)
-		statusEmoji := map[string]string{
-			"confirmed":"✅","pending":"⏳","completed":"✔️","cancelled":"❌",
-		}
-		emoji := statusEmoji[status]
-		if emoji == "" { emoji = "📌" }
-		sb.WriteString(fmt.Sprintf("%s **%s**\n   👩 %s · %s · %.0f ₸\n\n",
-			emoji, svcName, masterName, startsAt.Format("02.01 15:04"), price))
-		count++
+		statusLabel := map[string]string{
+    "confirmed": "[Подтверждено]",
+    "pending":   "[Ожидает]",
+    "completed": "[Завершено]",
+    "cancelled": "[Отменено]",
+	}
+	label := statusLabel[status]
+	if label == "" { label = "[Запись]" }
+	sb.WriteString(fmt.Sprintf("%s **%s**\n   %s · %s · %.0f ₸\n\n",
+	    label, svcName, masterName, startsAt.Format("02.01 15:04"), price))
+	count++
 	}
 	if count == 0 { return "У вас пока нет записей. Хотите записаться?" }
 	return sb.String()
 }
 
 func buildDefaultMsg() string {
-	return "Не совсем понял вопрос 🤔\n\nМогу помочь с:\n• услугами и ценами\n• записью к мастеру\n• информацией о мастерах\n• скидками и баллами\n• часами работы\n\nСпросите что-нибудь из этого!"
+	return "Не совсем понял вопрос \n\nМогу помочь с:\n• услугами и ценами\n• записью к мастеру\n• информацией о мастерах\n• скидками и баллами\n• часами работы\n\nСпросите что-нибудь из этого!"
 }
 
 func buildServiceButtons(data *BotData) []string {
@@ -614,7 +610,6 @@ func buildMasterButtons(data *BotData) []string {
 	return btns
 }
 
-// ── СЛОТЫ ─────────────────────────────────────────────────────────────────────
 
 func getSlotsSimple(ctx context.Context, pool *pgxpool.Pool, masterID, serviceID, date string, data *BotData) []string {
 	if masterID == "any" {
@@ -679,7 +674,6 @@ func getSlotsMaster(ctx context.Context, pool *pgxpool.Pool, masterID, serviceID
 	return result
 }
 
-// ── СОЗДАНИЕ ЗАПИСИ ───────────────────────────────────────────────────────────
 
 func createBookingSimple(ctx context.Context, pool *pgxpool.Pool, clientID string, sess *BotSession) error {
 	startsAt, err := time.Parse("2006-01-02T15:04:05-07:00", sess.SlotStart)
@@ -733,7 +727,6 @@ func createBookingSimple(ctx context.Context, pool *pgxpool.Pool, clientID strin
 	return err
 }
 
-// ── УТИЛИТЫ ───────────────────────────────────────────────────────────────────
 
 func parseChatDateSimple(input string) string {
 	lower := strings.ToLower(strings.TrimSpace(input))

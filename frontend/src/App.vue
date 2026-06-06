@@ -9,6 +9,7 @@ import AppFooter           from '@/components/AppFooter.vue'
 import ChatBot             from '@/components/ChatBot.vue'
 import { useBookingStore } from '@/stores/booking'
 import { onMounted }       from 'vue'
+import { ArrowRight, X } from 'lucide-vue-next'
 
 const auth   = useAuthStore()
 const router = useRouter()
@@ -145,51 +146,51 @@ function logout() {
               <span class="navbar__logo-name">Beauty Dana</span>
               <span class="navbar__logo-sub">СТУДИЯ КРАСОТЫ</span>
             </div>
-            <button class="mobile-menu__close" @click="closeMenu">✕</button>
+            <button class="mobile-menu__close" @click="closeMenu"><X :size="20" /></button>
           </div>
 
           <nav class="mobile-menu__nav">
             <RouterLink to="/book" class="mobile-link" @click="closeMenu">
               <span class="mobile-link__num">01</span>
               {{ t('nav.book') }}
-              <span class="mobile-link__arrow">→</span>
+              <span class="mobile-link__arrow"><ArrowRight class="mobile-link__arrow" :size="18" /></span>
             </RouterLink>
             <RouterLink to="/gallery" class="mobile-link" @click="closeMenu">
               <span class="mobile-link__num">02</span>
               {{ t('nav.gallery') }}
-              <span class="mobile-link__arrow">→</span>
+              <span class="mobile-link__arrow"><ArrowRight class="mobile-link__arrow" :size="18" /></span>
             </RouterLink>
             <RouterLink to="/masters" class="mobile-link" @click="closeMenu">
               <span class="mobile-link__num">03</span>
               {{ t('nav.masters') }}
-              <span class="mobile-link__arrow">→</span>
+              <span class="mobile-link__arrow"><ArrowRight class="mobile-link__arrow" :size="18" /></span>
             </RouterLink>
             <RouterLink to="/about" class="mobile-link" @click="closeMenu">
               <span class="mobile-link__num">04</span>
               {{ t('nav.about') }}
-              <span class="mobile-link__arrow">→</span>
+              <span class="mobile-link__arrow"><ArrowRight class="mobile-link__arrow" :size="18" /></span>
             </RouterLink>
             <template v-if="auth.isLoggedIn && !auth.isMaster && !auth.isAdmin">
               <RouterLink to="/my" class="mobile-link" @click="closeMenu">
                 <span class="mobile-link__num">05</span>
                 {{ t('nav.myBookings') }}
-                <span class="mobile-link__arrow">→</span>
+                <span class="mobile-link__arrow"><ArrowRight class="mobile-link__arrow" :size="18" /></span>
               </RouterLink>
               <RouterLink to="/profile" class="mobile-link" @click="closeMenu">
                 <span class="mobile-link__num">06</span>
                 {{ t('nav.profile') }}
-                <span class="mobile-link__arrow">→</span>
+                <span class="mobile-link__arrow"><ArrowRight class="mobile-link__arrow" :size="18" /></span>
               </RouterLink>
             </template>
             <RouterLink v-if="auth.isMaster" to="/master" class="mobile-link" @click="closeMenu">
               <span class="mobile-link__num">05</span>
               {{ t('nav.cabinet') }}
-              <span class="mobile-link__arrow">→</span>
+              <span class="mobile-link__arrow"><ArrowRight class="mobile-link__arrow" :size="18" /></span>
             </RouterLink>
             <RouterLink v-if="auth.isAdmin" to="/admin" class="mobile-link" @click="closeMenu">
               <span class="mobile-link__num">05</span>
               {{ t('nav.admin') }}
-              <span class="mobile-link__arrow">→</span>
+              <span class="mobile-link__arrow"><ArrowRight class="mobile-link__arrow" :size="18" /></span>
             </RouterLink>
           </nav>
 
@@ -208,7 +209,7 @@ function logout() {
               to="/login"
               class="btn btn-primary btn-full"
               @click="closeMenu"
-            >{{ t('nav.login') }} →</RouterLink>
+            >{{ t('nav.login') }} <ArrowRight class="mobile-link__arrow" :size="18" /></RouterLink>
             <button v-else class="btn btn-outline btn-full" @click="logout">
               {{ t('nav.logout') }}
             </button>
