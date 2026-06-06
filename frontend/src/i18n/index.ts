@@ -428,7 +428,7 @@ const ru = {
   },
   footer: {
     tagline: 'Красота в каждой детали',
-    address: '📍 г. Есик, Алматинская область',
+    address: 'г. Есик, Алматинская область',
     nav_title: 'Навигация',
     home: 'Главная',
     masters: 'Мастера',
@@ -782,7 +782,7 @@ const kzOverrides = {
   },
   footer: {
     tagline: 'Әрбір бөлшектегі сұлулық',
-    address: '📍 Есік қ., Алматы облысы',
+    address: 'Есік қ., Алматы облысы',
     nav_title: 'Навигация',
     home: 'Басты бет',
     masters: 'Шеберлер',
@@ -1139,7 +1139,7 @@ const enOverrides = {
   },
   footer: {
     tagline: 'Beauty in every detail',
-    address: '📍 Yesik, Almaty region',
+    address: 'Yesik, Almaty region',
     nav_title: 'Navigation',
     home: 'Home',
     masters: 'Masters',
