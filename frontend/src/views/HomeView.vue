@@ -8,6 +8,7 @@ import { galleryApi }            from '@/api/gallery'
 import { useBookingStore }       from '@/stores/booking'
 import type { Service, Master }  from '@/types'
 import { Check, Gem, Heart, Zap, ArrowRight, Star } from 'lucide-vue-next'
+import { api } from '@/api'
 
 const { t, tm, locale } = useI18n()
 const router    = useRouter()
@@ -34,7 +35,7 @@ onMounted(async () => {
     servicesApi.list(),
     mastersApi.list(),
     galleryApi.list().catch(() => []),
-    fetch('/api/v1/reviews/public').then(r => r.json()).catch(() => []),
+    api.get('/reviews/public').then(res => res.data).catch(() => []),
   ])
   uslugi.value       = s ?? []
   mastera.value      = m ?? []
