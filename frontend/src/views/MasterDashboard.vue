@@ -78,6 +78,7 @@ const rescheduleSlotISO   = ref('')
 const allMastersForReschedule = ref<any[]>([])
 const today = new Date().toISOString().split('T')[0]
 
+
 const activeBookings = computed(() =>
   bookings.value.filter(b => ['pending', 'confirmed'].includes(b.status))
     .sort((a, b) => new Date(a.starts_at).getTime() - new Date(b.starts_at).getTime())
@@ -167,6 +168,11 @@ async function loadStats() {
 async function loadSOS() {
   try { sosList.value = await loyaltyApi.getMasterSOS().catch(() => []) }
   catch { sosList.value = [] }
+}
+
+async function respondSOS(id: string, status: 'accepted' | 'declined') {
+  await loyaltyApi.respondSOS(id, status === 'accepted', '')
+  await loadSOS()
 }
 
 onMounted(async () => {
@@ -311,6 +317,23 @@ onUnmounted(() => channel?.unsubscribe())
           <h3 style="font-size:15px;font-weight:600;margin-bottom:10px">
             {{ t('master.sos_requests', { n: sosList.length }) }}
           </h3>
+          <div v-for="sos in sosList" :key="sos.id" class="card" style="margin-bottom:10px;padding:16px">
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <div>
+                <p style="font-weight:600;font-size:14px">{{ sos.service_name || '—' }}</p>
+                <p style="font-size:12px;color:var(--text-3);margin-top:4px">
+                  {{ sos.client_name || 'Клиент' }} · {{ formatDate(sos.preferred_range_start) }}
+                </p>
+                <p v-if="sos.client_note" style="font-size:12px;color:var(--text-2);margin-top:4px;font-style:italic">
+                  {{ sos.client_note }}
+                </p>
+              </div>
+              <div style="display:flex;gap:8px">
+                <button class="btn btn-sm" style="background:var(--success-bg);color:var(--success)" @click="respondSOS(sos.id, 'accepted')">Принять</button>
+                <button class="btn btn-danger btn-sm" @click="respondSOS(sos.id, 'declined')">Отклонить</button>
+              </div>
+            </div>
+          </div>
         </div>
 
         <div v-if="loading" class="state-msg">{{ t('common.loading') }}</div>

@@ -478,7 +478,14 @@ function formatDateTime(iso: string) {
 .booking-item__master  { font-size: 13px; color: var(--accent); font-weight: 500; }
 .booking-item__notes   { font-size: 12px; color: var(--text-3); margin-top: 6px; font-style: italic; }
 .booking-item__actions-mobile { display: none; }
-.booking-item__right   { display: flex; flex-direction: column; align-items: flex-end; gap: 8px; }
+.booking-item__right {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
 .booking-item__price   { font-family: var(--font-serif); font-size: 18px; font-weight: 700; color: var(--text); }
 .booking-item__actions { display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
 

@@ -79,13 +79,23 @@ onMounted(async () => {
 
 watch(range, loadAnalytics)
 
-const filteredBookings = computed(() =>
-  bookings.value.filter(b => {
+const sortBy = ref<'date_desc' | 'date_asc' | 'price_desc' | 'price_asc'>('date_desc')
+
+const filteredBookings = computed(() => {
+  const list = bookings.value.filter(b => {
     const statusOk = filterStatus.value === 'all' || b.status === filterStatus.value
     const masterOk = filterMaster.value === 'all' || b.master_id === filterMaster.value
     return statusOk && masterOk
   })
-)
+
+  return list.sort((a, b) => {
+    if (sortBy.value === 'date_desc') return new Date(b.starts_at).getTime() - new Date(a.starts_at).getTime()
+    if (sortBy.value === 'date_asc')  return new Date(a.starts_at).getTime() - new Date(b.starts_at).getTime()
+    if (sortBy.value === 'price_desc') return b.price_paid - a.price_paid
+    if (sortBy.value === 'price_asc')  return a.price_paid - b.price_paid
+    return 0
+  })
+})
 
 const isDark = computed(() =>
   document.documentElement.getAttribute('data-theme') === 'dark'
@@ -459,6 +469,12 @@ async function createService() {
         <select v-model="filterMaster" class="field-input field-select" style="width:auto">
           <option value="all">{{ t('admin.filter_all_masters') }}</option>
           <option v-for="m in masters" :key="m.id" :value="m.id">{{ m.full_name }}</option>
+        </select>
+        <select v-model="sortBy" class="field-input field-select" style="width:auto">
+          <option value="date_desc">Дата: сначала новые</option>
+          <option value="date_asc">Дата: сначала старые</option>
+          <option value="price_desc">Цена: по убыванию</option>
+          <option value="price_asc">Цена: по возрастанию</option>
         </select>
         <span style="font-size:13px;color:var(--text-3);margin-left:auto">
           {{ filteredBookings.length }} {{ t('admin.bookings_count') }}
