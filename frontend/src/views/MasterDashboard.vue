@@ -341,7 +341,7 @@ onUnmounted(() => channel?.unsubscribe())
         <template v-else>
           <div v-for="(group, date) in groupByDate(activeBookings)" :key="date" class="date-group">
             <div class="date-group__title">{{ date }}</div>
-            <div v-for="b in group" :key="b.id" class="booking-row">
+            <div v-for="b in group" :key="b.id" class="booking-row booking-row--active">
               <div class="booking-row__time">{{ formatTime(b.starts_at) }}</div>
               <div class="booking-row__body">
                 <p class="booking-row__service">{{ b.service_name || '—' }}</p>
@@ -419,7 +419,7 @@ onUnmounted(() => channel?.unsubscribe())
             <div
               v-for="b in historyBookings"
               :key="b.id"
-              class="booking-row booking-row--past"
+              class="booking-row booking-row--history"
             >
               <div class="booking-row__time">
                 <span class="booking-row__hour">{{ formatTime(b.starts_at) }}</span>
@@ -744,22 +744,21 @@ onUnmounted(() => channel?.unsubscribe())
   padding: 10px 0; border-bottom: 1px solid var(--border);
   text-transform: capitalize;
 }
-.booking-row {
+.booking-row--active {
   display: grid;
   grid-template-columns: 70px 1fr auto auto auto;
   gap: 16px; align-items: center;
   padding: 16px 0; border-bottom: 1px solid var(--border);
 }
 .booking-row__time    { font-family: var(--font-serif); font-size: 26px; font-weight: 300; color: var(--text); }
-.booking-row__service { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 2px; }
 .booking-row__client  { font-size: 12px; color: var(--text-3); }
 .vibe-badge           { font-size: 14px; margin-top: 2px; display: inline-block; }
-.booking-row__price   { font-size: 15px; font-weight: 700; white-space: nowrap; }
+.booking-row__price   { font-size: 15px; font-weight: 700; color: var(--text); white-space: nowrap; }
 .booking-row__actions { display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
 
 .booking-row__actions-mobile { display: none; }
 
-.booking-row {
+.booking-row--history {
   display: grid;
   grid-template-columns: 110px 1fr auto;
   gap: 16px; align-items: start;
@@ -773,7 +772,6 @@ onUnmounted(() => channel?.unsubscribe())
 .booking-row__client  { font-size: 12px; color: var(--text-3); }
 .booking-row__notes   { font-size: 11px; color: var(--text-3); font-style: italic; margin-top: 4px; }
 .booking-row__right   { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; }
-.booking-row__price   { font-family: var(--font-serif); font-size: 15px; font-weight: 700; color: var(--text); }
 
 .kpi-grid  { display: grid; grid-template-columns: repeat(auto-fill,minmax(140px,1fr)); gap: 12px; }
 .kpi-card  {
@@ -857,8 +855,12 @@ onUnmounted(() => channel?.unsubscribe())
   .tabs--desktop { display: none; }
   .tabs-mobile   { display: block; }
 
-  .booking-row {
+  .booking-row--active {
     grid-template-columns: 60px 1fr;
+    gap: 12px;
+  }
+  .booking-row--history {
+    grid-template-columns: 80px 1fr;
     gap: 12px;
   }
   .booking-row__badge-desktop   { display: none; }
