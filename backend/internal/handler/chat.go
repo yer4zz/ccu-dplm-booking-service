@@ -441,7 +441,7 @@ func loadData(ctx context.Context, pool *pgxpool.Pool) (*BotData, error) {
 
 	rows, err := pool.Query(ctx, `
 		select id::text, name, category, duration_min, price, coalesce(description,'')
-		from public.services where is_active=true order by sort_order
+		from public.services where is_active=true order by created_at
 	`)
 	if err != nil { return nil, err }
 	defer rows.Close()
