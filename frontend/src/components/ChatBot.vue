@@ -2,6 +2,7 @@
 import { ref, nextTick, onMounted } from 'vue'
 import { useAuthStore } from '@/stores/auth'
 import { X } from 'lucide-vue-next'
+import { api } from '@/api'
 
 const auth = useAuthStore()
 
@@ -116,17 +117,14 @@ async function send(text?: string) {
   }, 1500)
 
   try {
-    const res = await fetch('/api/v1/chat', {
-      method:  'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        message:    msgText,
-        session_id: sessionId,
-        user_id:    auth.user?.id ?? '',
-        history:    history.value.slice(-8),
-      }),
-    })
-    const data = await res.json()
+    const res = await api.post('/chat', {
+    message:    msgText,
+    session_id: sessionId,
+    user_id:    auth.user?.id ?? '',
+    history:    history.value.slice(-8),
+    session:    currentSession.value,
+  })
+  const data = res.data
 
     clearTimeout(thinkingTimer)
 
