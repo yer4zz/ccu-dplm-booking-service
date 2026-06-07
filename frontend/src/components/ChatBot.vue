@@ -20,7 +20,7 @@ interface HistoryItem {
 }
 
 const STORAGE_KEY = 'beauty_dana_chat'
-const HISTORY_TTL = 24 * 60 * 60 * 1000 // 24 часа
+const HISTORY_TTL = 24 * 60 * 60 * 1000
 
 const isOpen     = ref(false)
 const messages   = ref<Message[]>([])
@@ -75,28 +75,25 @@ function clearChat() {
     })
   })
 }
-
-// ── Открытие чата ─────────────────────────────────────
+=
 function open() {
   isOpen.value = true
   if (messages.value.length === 0) {
     messages.value.push({
       role: 'bot',
-      text: 'Привет! 👋 Я ИИ-помощник Beauty Dana. Могу рассказать об услугах, ценах, мастерах или помочь с записью. Что вас интересует?',
+      text: 'Привет! Я ИИ-помощник Beauty Dana. Могу рассказать об услугах, ценах, мастерах или помочь с записью. Что вас интересует?',
       time: getTime(),
       quickReplies: ['Записаться', 'Услуги и цены', 'Наши мастера', 'Скидки'],
     })
   }
   nextTick(scrollToBottom)
 }
-
-// ── Отправка сообщения ────────────────────────────────
+=
 async function send(text?: string) {
   const msgText = (text ?? input.value).trim()
   if (!msgText || loading.value) return
 
-  // Спецкнопка — войти
-  if (msgText === '🔑 Войти') {
+  if (msgText === 'Войти') {
     isOpen.value = false
     window.location.href = '/login?redirect=/book'
     return
@@ -108,7 +105,6 @@ async function send(text?: string) {
   loading.value = true
   await nextTick(scrollToBottom)
 
-  // Показываем анимацию — сначала "typing", потом если долго — "thinking"
   const typingMsg: Message = { role: 'bot', text: '', time: getTime(), typing: true }
   messages.value.push(typingMsg)
   statusType.value = 'typing'
@@ -127,14 +123,13 @@ async function send(text?: string) {
         message:    msgText,
         session_id: sessionId,
         user_id:    auth.user?.id ?? '',
-        history:    history.value.slice(-8), // последние 8
+        history:    history.value.slice(-8),
       }),
     })
     const data = await res.json()
 
     clearTimeout(thinkingTimer)
 
-    // Убираем typing bubble
     const idx = [...messages.value].reverse().findIndex(m => m.typing)
     const realIdx = idx !== -1 ? messages.value.length - 1 - idx : -1
     if (realIdx !== -1) messages.value.splice(realIdx, 1)
@@ -149,19 +144,16 @@ async function send(text?: string) {
     }
     messages.value.push(botMsg)
 
-    // Обновляем сессию бронирования
     if (data.session) {
       currentSession.value = data.session
     }
 
-    // Quick replies если есть
     if (data.quick_replies?.length) {
       botMsg.quickReplies = data.quick_replies
     }
-    // Если нужен логин — добавляем кнопку только если её ещё нет
     if (botText.includes('войти') || botText.includes('аккаунт')) {
-      if (!auth.isLoggedIn && !botMsg.quickReplies?.includes('🔑 Войти')) {
-        botMsg.quickReplies = [...(botMsg.quickReplies ?? []), '🔑 Войти']
+      if (!auth.isLoggedIn && !botMsg.quickReplies?.includes('Войти')) {
+        botMsg.quickReplies = [...(botMsg.quickReplies ?? []), 'Войти']
       }
     }
 
@@ -185,8 +177,6 @@ async function send(text?: string) {
     await nextTick(scrollToBottom)
   }
 }
-
-// Streaming — показываем текст по символам
 
 
 function scrollToBottom() {

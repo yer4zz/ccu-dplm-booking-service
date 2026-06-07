@@ -50,7 +50,6 @@ const reviews   = ref<any[]>([])
 const sosList   = ref<any[]>([])
 const activeTab = ref<'bookings' | 'history' | 'stats' | 'reviews' | 'gallery' | 'services'>('bookings')
 
-// мобильное меню табов
 const tabsOpen = ref(false)
 const activeTabLabel = computed(() => tabs.value.find(t => t.key === activeTab.value)?.label ?? '')
 

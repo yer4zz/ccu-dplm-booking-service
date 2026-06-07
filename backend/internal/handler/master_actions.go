@@ -193,7 +193,6 @@ func GetMasterStats(repo *repository.Repo) gin.HandlerFunc {
 			topService        string
 		)
 
-		// Основная статистика
 		repo.DB().QueryRow(ctx, `
 			select
 				count(*)                                                    as total_bookings,
@@ -210,7 +209,6 @@ func GetMasterStats(repo *repository.Repo) gin.HandlerFunc {
 			&thisMonthRevenue, &thisMonthBookings,
 		)
 
-		// Рейтинг и количество отзывов
 		repo.DB().QueryRow(ctx, `
 			select
 				coalesce(avg(rating), 0) as avg_rating,
@@ -219,7 +217,6 @@ func GetMasterStats(repo *repository.Repo) gin.HandlerFunc {
 			where master_id = $1
 		`, masterID).Scan(&avgRating, &totalReviews)
 
-		// Популярная услуга
 		repo.DB().QueryRow(ctx, `
 			select coalesce(s.name, '')
 			from public.bookings b

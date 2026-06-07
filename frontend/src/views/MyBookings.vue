@@ -49,7 +49,7 @@ onMounted(async () => {
   waitlist.value        = w ?? []
   autoReschedules.value = ar ?? []
   zagruzka.value        = false
-  // auto-select first non-empty tab
+
   if (bookings.value.some(b => b.status === 'pending')) activeTab.value = 'pending'
   else if (bookings.value.some(b => b.status === 'confirmed')) activeTab.value = 'confirmed'
   else if (bookings.value.some(b => b.status === 'completed')) activeTab.value = 'completed'

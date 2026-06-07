@@ -18,7 +18,6 @@ const vybrana  = ref<any | null>(null)
 const filterMaster  = ref('all')
 const filterService = ref('all')
 
-// мобильные фильтры — показать/скрыть
 const filtersOpen = ref(false)
 
 onMounted(async () => {

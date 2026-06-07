@@ -13,7 +13,6 @@ const router = useRouter()
 const auth   = useAuthStore()
 const store  = useBookingStore()
 
-// Локализованное название услуги
 function svcName(svc: any): string {
   if (locale.value === 'kz' && svc.name_kz) return svc.name_kz
   if (locale.value === 'en' && svc.name_en) return svc.name_en

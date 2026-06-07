@@ -17,7 +17,6 @@ type Cache struct {
 
 func New() *Cache {
 	c := &Cache{data: make(map[string]entry)}
-	// Фоновая очистка каждые 10 минут
 	go func() {
 		for range time.Tick(10 * time.Minute) {
 			c.cleanup()
