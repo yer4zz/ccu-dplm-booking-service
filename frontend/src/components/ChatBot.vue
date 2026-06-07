@@ -75,7 +75,7 @@ function clearChat() {
     })
   })
 }
-=
+
 function open() {
   isOpen.value = true
   if (messages.value.length === 0) {
@@ -88,7 +88,7 @@ function open() {
   }
   nextTick(scrollToBottom)
 }
-=
+
 async function send(text?: string) {
   const msgText = (text ?? input.value).trim()
   if (!msgText || loading.value) return
